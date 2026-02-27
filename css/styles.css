@@ -287,6 +287,7 @@ body, html {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 10px;
 }
 
 .profile-image {
@@ -295,13 +296,20 @@ body, html {
   cursor: pointer;
 }
 
+.user-id {
+  margin-top: 8px;
+  font-size: 20px;
+  font-family: "Times New Roman", serif;
+  font-weight: bold;
+}
+
 .warning-bar {
   position: relative;
-  width: 100%;
   background-color: #f44336;
   color: white;
-  padding: 16px 48px 16px 20px;
-  font-size: 20px;
+  padding: 14px 48px 14px 20px;
+  font-size: 18px;
+  display: none;
   display: none;
   box-sizing: border-box;
 }

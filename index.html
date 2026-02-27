@@ -36,37 +36,20 @@
       <h1>-Colors Example-</h1>
       <div class="color-line color-line-1">Hello There</div>
       <div class="color-line color-line-2">Hi Again</div>
+
       <div class="pie-container">
-        <svg viewBox="0 0 340 380" width="100%" class="pie-chart">
-          <!-- Roses slice: 300/900 = 120° -->
-          <path d="M170,180 L170,50 A130,130 0 0,1 282.6,245 Z" fill="#E8556D" stroke="white" stroke-width="2"/>
-          <!-- Violets slice: 500/900 ≈ 200° -->
-          <path d="M170,180 L282.6,245 A130,130 0 1,1 86.4,80.4 Z" fill="#DDA0DD" stroke="white" stroke-width="2"/>
-          <!-- Tulips slice: 100/900 ≈ 40° -->
-          <path d="M170,180 L86.4,80.4 A130,130 0 0,1 170,50 Z" fill="#F0E68C" stroke="white" stroke-width="2"/>
-          <!-- Value labels -->
-          <text x="120" y="42" font-size="18" font-weight="bold" fill="#000">100</text>
-          <text x="290" y="195" font-size="18" font-weight="bold" fill="#000">300</text>
-          <text x="50" y="295" font-size="18" font-weight="bold" fill="#000">500</text>
-          <!-- Legend -->
-          <rect x="30" y="340" width="20" height="20" fill="#E8556D"/>
-          <text x="55" y="356" font-size="16" font-weight="bold" fill="#000">Roses</text>
-          <rect x="120" y="340" width="20" height="20" fill="#DDA0DD"/>
-          <text x="145" y="356" font-size="16" font-weight="bold" fill="#000">Violets</text>
-          <rect x="220" y="340" width="20" height="20" fill="#F0E68C"/>
-          <text x="245" y="356" font-size="16" font-weight="bold" fill="#000">Tulips</text>
-        </svg>
+        <canvas id="colorsChart" width="300" height="300"></canvas>
       </div>
     </div>
 
     <div id="Profile" class="tabcontent">
-      <h1>Profile</h1>
+      <h1>-User Profile-</h1>
       <div class="profile-info">
-        <img src="images/profile.png" class="profile-image" onclick="showWarning()">
-        <p class="user-id">User ID</p>
+        <img src="images/SmileyFace.png" class="profile-image" onclick="showWarning()">
+        <p class="user-id">Smiley J. Smile</p>
       </div>
       <div id="profileWarning" class="warning-bar">
-        <span>Hello! Do not click on the profile image.</span>
+        <span><strong>Warning!</strong> Do not click on the profile images.</span>
         <button class="close-btn" onclick="closeWarning()">×</button>
       </div>
     </div>
@@ -169,6 +152,8 @@
   </div>
 </div>
 
+<script src="js/chart.js"></script>
+<script src="js/chartjs-plugin-datalabels.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
