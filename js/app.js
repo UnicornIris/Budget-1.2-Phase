@@ -22,7 +22,7 @@ function openTab(tabName, elmnt) {
   initColorsChart();
   }
 }
-
+/*source: https://www.w3schools.com/js/js_events_mouse.asp*/
 document.addEventListener("DOMContentLoaded", function() {
   var defaultTab = document.getElementById("defaultOpen");
   if (defaultTab) {
