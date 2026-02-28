@@ -62,7 +62,8 @@ body, html {
 /* ========== Tab-specific backgrounds (override if needed) ========== */
 
 /* ========== Tab 2: LR ========== */
-
+/* Source: W3Schools CSS Position Property
+     https://www.w3schools.com/css/css_positioning.asp */
 #LR {
   background-color: #FFB6C1;
   position: relative;
@@ -167,7 +168,7 @@ body, html {
   font-weight: bold;
 }
 /* ========== Tab 6: ToDo ========== */
-
+/* Source: https://www.w3schools.com/howto/howto_js_todolist.asp  */
 #ToDo {
   background-color: #FFB6C1;
   text-align: left;
