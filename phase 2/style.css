@@ -1,0 +1,28 @@
+/* You implement */
+html {
+     margin: 0;      
+    padding: 0;    
+    height: 100%; 
+}
+body {
+    background-color: #D8C6E5;
+    font-family: Arial, sans-serif;
+    
+}
+
+.top-cards {
+    display: flex;          /* This aligns items horizontally */
+    flex-direction: row;    /* Ensures they stay in a line */
+    justify-content: space-between; /* Puts space between the two cards */
+    gap: 12px;              /* Adds a specific gap between cards */
+    width: 100%;            /* Makes the row fill the screen width */
+    margin-bottom: 20px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 16px;
+    flex: 1;                /* Forces both cards to be the exact same width */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
