@@ -1,11 +1,14 @@
-let transactions = [{
-    id: 1,
-    name: "Netflix",
-    amount: 15.99,
-    category: "Entertainment",
-    date: "2026-03-20",
-    note: "Monthly subscription"
-  }
+let transactions = [
+    { id: 1, name: 'Coffee', amount: 5.50, category: 'Coffee', 
+    date: "2026-03-20", note: "Starbucks" },
+    { id: 2, name: 'Lunch', amount: 12.99, category: 'Food', 
+        date: "2026-03-18", note: "Starbucks" },
+    { id: 3, name: 'Uber', amount: 8.25, category: 'Transport', 
+        date: "2026-03-10", note: "Starbucks" },
+    { id: 4, name: 'Groceries', amount: 45.00, category: 'Shopping', 
+        date: "2026-03-22", note: "Starbucks" },
+    { id: 5, name: 'Netflix', amount: 15.99, category: 'Bills', 
+        date: "2026-03-01", note: "Starbucks" }
 ];
 
 let categories = ["Entertainment", "Food", "Rent", "Transportation","Shopping",
@@ -92,24 +95,53 @@ function createCategory() {
         alert("Category already exists.");
     }
 }
+function cancelEdit() {
+    document.getElementById("edit-form").style.display = "none";
+}
 
-function editTransaction(id) {
-    const x = transactions.find(x => x.id === id);
+function saveEdit() {
+    const x = transactions.find(t => t.id === editingId);
     if (!x) return;
 
-    const newName = prompt("Edit name:", x.name);
-    const newAmount = parseFloat(prompt("Edit amount:", x.amount));
-    const newCategory = prompt("Edit category:", x.category);
-    const newDate = prompt("Edit date:", x.date);
-    const newNote = prompt("Edit note:", x.note);
-
-    x.name = newName;
-    x.amount = newAmount;
-    x.category = newCategory;
-    x.date = newDate;
-    x.note = newNote;
+    x.name = document.getElementById("editName").value;
+    x.amount = parseFloat(document.getElementById("editAmount").value);
+    x.category = document.getElementById("editCategory").value;
+    x.date = document.getElementById("editDate").value;
+    x.note = document.getElementById("editNote").value;
 
     renderTransactions();
+
+    document.getElementById("edit-form").style.display = "none";
+}
+
+
+function editTransaction(id) {
+    const x = transactions.find(t => t.id === id);
+    if (!x) return;
+
+    editingId = id;
+
+    document.getElementById("editName").value = x.name;
+    document.getElementById("editAmount").value = x.amount;
+    document.getElementById("editDate").value = x.date;
+    document.getElementById("editNote").value = x.note;
+
+    const select = document.getElementById("editCategory");
+    select.innerHTML = "";
+
+    categories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat;
+        option.textContent = cat;
+
+        if (cat === x.category) {
+            option.selected = true;
+        }
+
+        select.appendChild(option);
+    });
+
+    document.getElementById("edit-form").style.display = "block";
 }
 
 function showDateRange() {
