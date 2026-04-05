@@ -55,27 +55,28 @@ function renderGoals() {
 
         const div = document.createElement("div");
 
-        div.className = "card " + (g.saved >= g.amount ? "goal-complete" : "goal-incomplete");
-
+        div.className = "goal-card " + (g.saved >= g.amount ? "goal-complete" : "goal-incomplete");
         div.innerHTML = `
             <h3>${g.name}</h3>
-            <p>Target: $${g.amount}</p>
-            <p>Date: ${g.date}</p>
 
-            <p>${percent}% completed</p>
+            <p class="goal-numbers">
+                $${g.saved.toFixed(0)} / $${g.amount.toFixed(0)}
+            </p>
 
-            <!-- Progress bar -->
+            <p class="goal-percent">
+                ${percent}% complete
+            </p>
+
             <div class="progress-bar">
                 <div class="progress-fill" style="width: ${percent}%"></div>
             </div>
 
-            <p>
-                ${g.view === "percent" ? percent + "%" : "$" + remaining + " left"}
-            </p>
+            <p class="goal-date">Due: ${g.date}</p>
 
-            <button onclick="toggleView(${g.id})">Toggle View</button>
-            <button onclick="editGoal(${g.id})">Edit</button>
-            <button onclick="addMoney(${g.id})">+ Save $50</button>
+            <div class="goal-actions">
+                <button onclick="addMoney(${g.id})">+ $50</button>
+                <button onclick="editGoal(${g.id})">Edit</button>
+            </div>
         `;
 
         container.appendChild(div);
@@ -110,10 +111,62 @@ function addMoney(id) {
     const goals = loadGoals();
     const goal = goals.find(g => g.id === id);
 
-    goal.saved += 50; 
+    const amount = prompt("How much did you save?");
+    goal.saved += parseFloat(amount);
 
     saveGoals(goals);
     renderGoals();
 }
 
 document.addEventListener("DOMContentLoaded", renderGoals);
+
+function renderGoals() {
+    const goals = loadGoals();
+
+    const activeContainer = document.getElementById("goals-list");
+    const completedContainer = document.getElementById("completed-goals-list");
+
+    activeContainer.innerHTML = "";
+    completedContainer.innerHTML = "";
+
+    goals.forEach(g => {
+        const percent = ((g.saved / g.amount) * 100).toFixed(0);
+
+        const div = document.createElement("div");
+
+        div.className = "goal-card " + (g.saved >= g.amount ? "goal-complete" : "goal-incomplete");
+
+        div.innerHTML = `
+            <h3>${g.name}</h3>
+
+            <p class="goal-numbers">
+                $${g.saved.toFixed(0)} / $${g.amount.toFixed(0)}
+            </p>
+
+            <p class="goal-percent">
+                ${percent}% complete
+            </p>
+
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: ${percent}%"></div>
+            </div>
+
+            <p class="goal-date">Due: ${g.date}</p>
+
+            ${
+                g.saved < g.amount
+                ? `<div class="goal-actions">
+                        <button onclick="addMoney(${g.id})">+ $50</button>
+                        <button onclick="editGoal(${g.id})">Edit</button>
+                   </div>`
+                : `<p class="goal-done"> Goal Achieved</p>`
+            }
+        `;
+
+        if (g.saved >= g.amount) {
+            completedContainer.appendChild(div);
+        } else {
+            activeContainer.appendChild(div);
+        }
+    });
+}
