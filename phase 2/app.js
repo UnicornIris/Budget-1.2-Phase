@@ -87,7 +87,14 @@ function formatDateForStorage(d) {
 }
 
 function formatCurrency(amt) {
-    return '$' + Number(amt).toFixed(2);
+    // 1. Check localStorage for the user's preference
+    const currency = localStorage.getItem("userCurrency") || "USD";
+    
+    // 2. Choose the correct symbol
+    const symbol = (currency === "EUR") ? "€" : "$";
+    
+    // 3. Return the formatted string
+    return symbol + Number(amt).toFixed(2);
 }
 
 function generateId() {
@@ -529,6 +536,16 @@ if (periodModal) {
 document.addEventListener('DOMContentLoaded', () => {
     populateIncomeSourceSelect();
     updateSpentTodayDisplay();
+    updateProgressSummary(); 
     if (periodLabel) periodLabel.textContent = formatPeriodLabel(selectedPeriod);
-    updateProgressSummary();
 });
+function getCurrencySymbol() {
+    const currency = localStorage.getItem("userCurrency") || "USD";
+    return currency === "EUR" ? "€" : "$";
+}
+
+function updateDisplay() {
+    const symbol = getCurrencySymbol();
+    const amount = 100; 
+    document.getElementById("balance-amount").textContent = symbol + amount.toFixed(2);
+}
