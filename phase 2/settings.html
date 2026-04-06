@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="settings.css">
 </head>
 <body>
-<header class="settings-header">
+ <header class="settings-header">
         <button class="menu-btn" aria-label="Open Menu">
             <i class="fa-solid fa-bars"></i>
         </button>
-        <h1>Settings</h1>
+        <h1 style="text-align: center; width: 100%;">Settings</h1>
     </header>
 
     <main class="settings-container">
@@ -22,11 +22,38 @@
             <div class="setting-item">
                 <div class="setting-info">
                     <i class="fa-solid fa-money-bill-transfer"></i>
-                    <span>Primary Currency</span>
+                    <span>Primary Currency: <span id="currencyDisplay">USD</span></span>
                 </div>
-                <button class="toggle-btn" id="currencyToggle">USD ($)</button>
+                <button class="toggle-btn" id="currencyToggle" onclick="toggleCurrency()">Toggle USD/EUR</button>
+            </div>
+        </section>
+
+        <section class="settings-group">
+            <h2 class="group-title">Notifications</h2>
+            
+            <div class="setting-item">
+                <div class="setting-info">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Low Balance Alerts</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="lowBalanceToggle" onchange="saveSettings()" checked>
+                    <span class="slider"></span>
+                </label>
             </div>
 
+            <div class="setting-item">
+                <div class="setting-info">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>Bill Due Reminders</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="billDueToggle" onchange="saveSettings()" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </section>
+    </main>
 
         </section>
 
@@ -79,7 +106,8 @@
     </a>
 </nav>
 
-
+<script src="settings.js"></script>
+    
     
 </body>
 </html>

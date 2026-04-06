@@ -2,16 +2,126 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Activity Page/title>
+    <title>Activity Page</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="activity.css">
 </head>
+
 <body>
 
+<div class="app-container">
 
+    <div class="card">
+        <h1>Transactions</h1>
+    </div>
 
+    <div class="card" style="display:flex; gap:10px; flex-wrap:wrap;">
 
+        <button onclick="showTransForm()" class="btn-primary">
+            + Add
+        </button>
 
+<<<<<<< HEAD
 
+=======
+        <button onclick="createCategory()" class="btn-secondary">
+            Category
+        </button>
+
+        <button onclick="showDateRange()" class="btn-secondary">
+            Filter
+        </button>
+
+        <button onclick="showAllTransactions()" class="btn-secondary">
+            All
+        </button>
+
+    </div>
+
+    <div id="add-transaction-form" class="modal hidden">
+        <div class="modal-content">
+
+            <h3>Add Transaction</h3>
+
+            <label>Name</label>
+            <input type="text" id="nameInput">
+
+            <label>Amount</label>
+            <input type="number" id="amountInput">
+
+            <label>Category</label>
+            <select id="categoryInput"></select>
+
+            <label>Date</label>
+            <input type="date" id="dateInput">
+
+            <label>Note</label>
+            <input type="text" id="noteInput">
+
+            <div class="modal-actions">
+                <button onclick="addTransaction()" class="btn-primary">Add</button>
+                <button onclick="cancelEdit()" class="btn-secondary">Close</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="date-range" class="modal hidden">
+        <div class="modal-content">
+
+            <h3>Filter by Date</h3>
+
+            <label>Start</label>
+            <input type="date" id="startDate">
+
+            <label>End</label>
+            <input type="date" id="endDate">
+
+            <div class="modal-actions">
+                <button onclick="rangeOfTransactions()" class="btn-primary">Apply</button>
+                <button onclick="cancelEdit()" class="btn-secondary">Close</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Your Transactions</h2>
+
+        <ul id="transactionList" class="transactions-list"></ul>
+    </div>
+
+    <div id="edit-form" class="modal hidden">
+        <div class="modal-content">
+
+            <h3>Edit Transaction</h3>
+
+            <label>Name</label>
+            <input type="text" id="editName">
+
+            <label>Amount</label>
+            <input type="number" id="editAmount">
+
+            <label>Category</label>
+            <select id="editCategory"></select>
+
+            <label>Date</label>
+            <input type="date" id="editDate">
+
+            <label>Note</label>
+            <input type="text" id="editNote">
+
+            <div class="modal-actions">
+                <button onclick="saveEdit()" class="btn-primary">Save</button>
+                <button onclick="cancelEdit()" class="btn-secondary">Cancel</button>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script src="transactions_script.js"></script>
+>>>>>>> 50d19959c5ef8f4434fe78af2abfd1145d5a26b2
 </body>
 </html>

@@ -16,7 +16,7 @@ let categories = ["Entertainment", "Food", "Rent", "Transportation","Shopping",
 
 
 let currentList = transactions;
-
+let editingId = null;
 function renderTransactions(dat = currentList) {
     const list = document.getElementById("transactionList");
     list.innerHTML = "";
@@ -40,7 +40,7 @@ function renderTransactions(dat = currentList) {
 }
 
 function showTransForm() {
-    document.getElementById("add-transaction-form").style.display = "block";
+    document.getElementById("add-transaction-form").classList.remove("hidden");
 }
 
 function addTransaction() {
@@ -60,15 +60,16 @@ function addTransaction() {
     };
 
     transactions.push(newTransaction);
+    currentList = transactions;
 
-    renderTransactions();
+    renderTransactions(currentList);
 
     document.getElementById("nameInput").value = "";
     document.getElementById("amountInput").value = "";
     document.getElementById("dateInput").value = "";
     document.getElementById("noteInput").value = "";
 
-    document.getElementById("add-transaction-form").style.display = "none";
+    document.getElementById("add-transaction-form").classList.add("hidden");
 }
 
 function updateCategoryDropdown() {
@@ -96,7 +97,7 @@ function createCategory() {
     }
 }
 function cancelEdit() {
-    document.getElementById("edit-form").style.display = "none";
+    document.getElementById("edit-form").classList.add("hidden");
 }
 
 function saveEdit() {
@@ -109,9 +110,9 @@ function saveEdit() {
     x.date = document.getElementById("editDate").value;
     x.note = document.getElementById("editNote").value;
 
-    renderTransactions();
+    renderTransactions(currentList);
 
-    document.getElementById("edit-form").style.display = "none";
+    document.getElementById("edit-form").classList.add("hidden");
 }
 
 
@@ -141,11 +142,10 @@ function editTransaction(id) {
         select.appendChild(option);
     });
 
-    document.getElementById("edit-form").style.display = "block";
-}
+    document.getElementById("edit-form").classList.remove("hidden");}
 
 function showDateRange() {
-    document.getElementById("date-range").style.display = "block";
+    document.getElementById("date-range").classList.remove("hidden");
 }
 
 function rangeOfTransactions() {
@@ -161,14 +161,16 @@ function rangeOfTransactions() {
 
 function deleteTransaction(id) {
     transactions = transactions.filter(x => x.id !== id);
-    renderTransactions();
+    currentList = transactions;
+
+    renderTransactions(currentList);
 }
 
 function showAllTransactions() {
     currentList = transactions;
-    renderTransactions();
+    renderTransactions(currentList);
 }
 
 
-
+updateCategoryDropdown();
 renderTransactions();
