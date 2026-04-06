@@ -2,51 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Goals Page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goals - Budget App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="app-container">
-    <h2>Goals</h2>
 
-    <!-- Create Goal -->
     <div class="card">
-        <h3>Create Goal</h3>
-        <input type="text" id="goal-name" placeholder="Goal name (Laptop)">
-        <input type="number" id="goal-amount" placeholder="Target amount">
-        <input type="date" id="goal-date">
-        <button onclick="addGoal()">Add Goal</button>
+        <h1 style="color: #597D5E; margin: 0;">
+            <i class="fa-solid fa-flag-checkered"></i> My Goals
+        </h1>
     </div>
 
-    <!-- Goals List -->
-    <div id="goals-list" class="goals-list"></div>
-    <h2>Completed Goals</h2>
-    <div id="completed-goals-list"></div>
-</div>
+    <div class="card" style="border-top: 4px solid #597D5E;">
+        <h3 style="color: #333; margin-top: 0;">Create Goal</h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+                <label style="font-size: 0.8rem; font-weight: bold; color: #666;">Goal Name</label>
+                <input type="text" id="goal-name" placeholder="e.g. New Laptop" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+            </div>
 
-<script src="goals.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="app.js"></script>
+            <div>
+                <label style="font-size: 0.8rem; font-weight: bold; color: #666;">Target Amount ($)</label>
+                <input type="number" id="goal-amount" placeholder="Target amount" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+            </div>
 
-<nav class="navigationtab">  
-<a href="index.html" class="nav-item active">
-       <i class="fa-solid fa-house"></i>
-        <span class="label">Home</span>
-    </a>
-    <a href="activity.html" class="nav-item"> 
-        <i class="fa-solid fa-money-bill-transfer"></i>
-        <span class="label">Activity</span>
-    </a>
-    <a href="goals.html" class="nav-item">
-      <i class="fa-solid fa-flag-checkered" style="color: #4CAF50"></i>
-        <span class="label" style="color: #4CAF50;">Goals</span>
-    </a>
-    <a href="settings.html" class="nav-item">
-       <i class="fa-solid fa-user-gear"></i>
-        <span class="label">Settings</span> 
-    </a>
-</nav>
-</body>
-</html>
+            <div>
+                <label style="font-size: 0.8rem; font-weight: bold; color: #666;">Target Date</label>
+                <input type="date" id="goal-date" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+            </div>
+
+            <button onclick="addGoal()" class="btn-primary" style="background-color: #597D5E; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px;">
+                <i class="fa-solid fa-plus"></i> Add Goal
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="label" style="border-bottom: 2px solid #f0f0f0;

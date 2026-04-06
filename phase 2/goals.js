@@ -44,10 +44,6 @@ function getMonthsLeft(date) {
     return Math.max(1, (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth()));
 }
 
-function renderGoals() {
-    const goals = loadGoals();
-    const container = document.getElementById("goals-list");
-    container.innerHTML = "";
 
     goals.forEach(g => {
         const percent = ((g.saved / g.amount) * 100).toFixed(0);
