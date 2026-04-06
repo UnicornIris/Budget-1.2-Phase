@@ -75,6 +75,18 @@ function addMoney(id) {
     renderGoals();
 }
 
+function deleteGoal(id) {
+    const confirmDelete = confirm("Are you sure you want to delete this goal?");
+    if (!confirmDelete) return;
+
+    let goals = loadGoals();
+    goals = goals.filter(g => g.id !== id);
+
+    saveGoals(goals);
+    renderGoals();
+}
+
+
 function renderGoals() {
     const goals = loadGoals();
     const activeContainer = document.getElementById("goals-list");
@@ -113,8 +125,14 @@ function renderGoals() {
                 ? `<div class="goal-actions">
                         <button onclick="addMoney(${g.id})">+ Add Savings</button>
                         <button onclick="editGoal(${g.id})">Edit</button>
+                        <button onclick="deleteGoal(${g.id})" class="btn-delete">Delete</button>
                    </div>`
-                : `<p class="goal-done"><i class="fa-solid fa-circle-check"></i> Goal Achieved</p>`
+                : `<div>
+                            <p class="goal-done"> Goal Achieved</p>
+                            <div class="goal-actions">
+                                <button onclick="deleteGoal(${g.id})" class="btn-delete">Delete</button>
+                            </div>
+                    </div>`               
             }
         `;
 
