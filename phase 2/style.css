@@ -358,7 +358,7 @@ body {
 }
 
 .nav-item.active {
-    color: #4CAF50; /* Highlight color for current page */
+    /* Highlight color for current page */
 }
 
 .icon {
