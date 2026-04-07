@@ -213,7 +213,14 @@ function computeSpentToday() {
 }
 
 function updateSpentTodayDisplay() {
-    if (spentTodayAmount) spentTodayAmount.textContent = formatCurrency(computeSpentToday());
+    const headerEl = document.getElementById('spent-today-amount-header');
+    if (headerEl) {
+        headerEl.textContent = formatCurrency(computeSpentToday());
+    }
+        const cardEl = document.getElementById('spent-today-amount');
+    if (cardEl) {
+        cardEl.textContent = formatCurrency(computeSpentToday());
+    }
 }
 
 function updateProgressSummary() {

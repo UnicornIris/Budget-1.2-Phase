@@ -11,8 +11,8 @@
 <div class="phone-frame">
 <div class="app-container with-fab-bar">
     <header class="screen-header">
-        <h1 class="screen-title">This period</h1>
-        <p class="screen-subtitle">Income and spending for the range you select below.</p>
+        <h1 class="screen-title">Budget Tracking</h1>
+
     </header>
 
     <div class="top-cards">
@@ -25,21 +25,6 @@
             <p class="label">Period</p>
             <p class="value-secondary" id="period-label">This month</p>
             <p class="hint">Tap to change</p>
-        </div>
-    </div>
-
-    <div id="spent-today-card" class="card spent-today-card" role="button" tabindex="0" aria-label="View today's transactions">
-        <p class="label">Spent today</p>
-        <p class="value-secondary" id="spent-today-amount">$0.00</p>
-        <p class="hint">Tap to view or edit today’s transactions</p>
-    </div>
-
-    <div class="card income-tools-card">
-        <p class="label">Income logging</p>
-        <p class="hint income-tools-hint">Record paychecks, refunds, and other money in.</p>
-        <div class="income-tools-row">
-            <button type="button" id="btn-open-income-modal" class="btn-income-tool">Add income</button>
-            <button type="button" id="btn-open-income-list" class="btn-income-tool btn-income-tool-secondary">View entries</button>
         </div>
     </div>
 
@@ -71,12 +56,26 @@
             </div>
         </div>
     </div>
+
+    <div class="card income-tools-card">
+        <p class="label">Log your income</p>
+        <p class="hint income-tools-hint">Record paychecks, refunds, and other money in.</p>
+        <div class="income-tools-row">
+            <button type="button" id="btn-open-income-modal" class="btn-income-tool">Add income</button>
+            <button type="button" id="btn-open-income-list" class="btn-income-tool btn-income-tool-secondary">View entries</button>
+        </div>
+    </div>
+
+   
 </div>
 
 <div id="today-transactions-view" class="fullscreen-view hidden">
     <div class="view-header">
         <button type="button" id="back-btn" class="back-btn" aria-label="Back">← Back</button>
         <h2 class="view-title">Today’s transactions</h2>
+        <div class="today-summary-header">
+            Total Spent Today: <span id="spent-today-amount-header" style="font-weight: bold; color: #d9534f;">$0.00</span>
+        </div>
     </div>
     <ul id="today-transactions-list" class="transactions-list"></ul>
 </div>
@@ -141,7 +140,6 @@
             <option value="Bills">Bills</option>
             <option value="Other">Other</option>
         </select>
-        <p class="modal-hint">You can also change category directly from the list.</p>
         <div class="modal-actions">
             <button type="button" id="edit-save-btn" class="btn-primary">Save</button>
             <button type="button" id="edit-cancel-btn" class="btn-secondary">Cancel</button>
@@ -154,7 +152,7 @@
         <i class="fa-solid fa-plus" aria-hidden="true"></i>
         <span class="fab-label">Quick add purchase</span>
     </button>
-    <button type="button" id="spent-today-btn" class="fab fab-secondary" onclick="document.getElementById('spent-today-card').click()">
+    <button type="button" id="spent-today-btn" class="fab fab-secondary" onclick="showTodayTransactionsView()">
         <span class="fab-label">Spent today</span>
     </button>
 </div>
@@ -169,12 +167,12 @@
         <input type="number" id="sandra-amount" placeholder="0.00" inputmode="decimal">
         <label for="purchase-category">Category</label>
         <select id="purchase-category">
-            <option value="coffee">Food</option>
-            <option value="coffee">Clothes</option>
-            <option value="groceries">Groceries</option>
-            <option value="transport">Transport</option>
-            <option value="transport">Entertainment</option>
-            <option value="other">Other</option>
+            <option value="Food">Food</option>
+            <option value="Clothes">Clothes</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Transport">Transport</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Other">Other</option>
         </select>
         <button type="button" class="save-btn" onclick="saveSandra()">Save purchase</button>
     </div>
@@ -191,10 +189,38 @@ function toggleSandra() {
 }
 
 function saveSandra() {
-    const amount = document.getElementById('sandra-amount').value;
-    const category = document.getElementById('purchase-category').value;
+    const amountInput = document.getElementById('sandra-amount');
+    const categorySelect = document.getElementById('purchase-category');
+    
+    const amount = parseFloat(amountInput.value);
+    const category = categorySelect.value;
+
     if (amount && amount > 0) {
-        alert('Saved $' + amount + ' for ' + category + '!');
+        // 1. Create a transaction object using your app's existing helpers
+        const newTransaction = {
+            id: generateId(), // Uses function from app.js
+            name: category + " Purchase",
+            amount: amount,
+            category: category,
+            date: formatDateForStorage(new Date()) // Ensures it shows up in "Today"
+        };
+
+        // 2. Push to the global array defined in app.js
+        transactions.push(newTransaction);
+
+        // 3. Save to LocalStorage using your app.js function
+        saveTransactions(transactions);
+
+        // 4. Trigger the UI updates already built into app.js
+        updateSpentTodayDisplay();
+        updateProgressSummary();
+        renderTodayTransactionsList();
+
+        // 5. Success UI
+        alert('Saved ' + formatCurrency(amount) + ' for ' + category + '!');
+        
+        // 6. Reset and Close
+        amountInput.value = '';
         toggleSandra();
     } else {
         alert('Please enter a valid amount.');
@@ -203,6 +229,7 @@ function saveSandra() {
 </script>
 
 <script src="app.js"></script>
+
 <nav class="navigationtab" aria-label="Main">
     <a href="activity.html" class="nav-item active">
         <i class="fa-solid fa-money-bill-transfer" aria-hidden="true" style="color: #4CAF50;"></i>
@@ -217,6 +244,6 @@ function saveSandra() {
         <span class="label">Settings</span>
     </a>
 </nav>
-</div>
-</body>
+
+</div> </body>
 </html>
