@@ -541,6 +541,13 @@ if (periodModal) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. CLEAR EVERYTHING ON STARTUP
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEY_INCOME);
+    transactions = [];
+    incomeEntries = [];
+
+    // 3. RUN THE REST OF THE SETUP
     populateIncomeSourceSelect();
     updateSpentTodayDisplay();
     updateProgressSummary(); 

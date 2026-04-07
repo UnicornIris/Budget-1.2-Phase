@@ -139,9 +139,6 @@ body {
     margin-bottom: 2px; /* Pulls the text closer to the icon */
 }
 
-.nav-item.active {
-    color: #4CAF50; /* Highlight color for current page */
-}
 
 .icon {
     font-size: 20px;
