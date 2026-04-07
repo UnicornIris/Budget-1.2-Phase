@@ -913,8 +913,8 @@ body {
     .reports-controls {
         grid-template-columns: 1fr;
     }
+}
 
     .reports-field-full {
         grid-column: 1;
     }
-}

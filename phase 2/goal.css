@@ -1,0 +1,402 @@
+/* ============================================
+   goal.css — fully standalone, no style.css needed
+   ============================================ */
+
+:root {
+    --frame-max: 390px;
+    --bg-page: #5A7C61;
+    --text-on-page: #1a1224;
+    --text-muted: #4a3d55;
+    --btn-primary-bg: #4f3a63;
+    --btn-primary-hover: #3d2d4d;
+    --accent-income: #1e7a4a;
+    --accent-expense: #b03028;
+    --card-radius: 10px;
+    --nav-h: 52px;
+    --fab-above-nav: 56px;
+    --z-nav: 1000;
+    --z-fab: 1001;
+    --z-modal: 2100;
+}
+
+/* ── Reset & base ── */
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+    box-sizing: border-box;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+body {
+    margin: 0;
+    background-color: rgb(12, 3, 3);
+    color: var(--text-on-page);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.45;
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+
+/* ── Phone frame ── */
+.phone-frame {
+    width: 100%;
+    max-width: var(--frame-max);
+    height: 100vh;
+    margin: 0 auto;
+    position: relative;
+    background-color: var(--bg-page);
+    color: var(--text-on-page);
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.12), 0 8px 32px rgba(0,0,0,0.2);
+    transform: translateZ(0);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ── Scrollable content area ── */
+.app-container.goals-page {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 10px calc(var(--nav-h) + var(--fab-above-nav) + 16px + env(safe-area-inset-bottom, 0px)) 10px;
+}
+
+/* ── Screen header & title ── */
+.screen-header {
+    margin-bottom: 8px;
+    border: none;
+    padding-bottom: 0;
+}
+
+.screen-title {
+    font-size: 1.375rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-on-page);
+}
+
+/* ── Cards ── */
+.card {
+    background-color: #fff;
+    border-radius: var(--card-radius);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px -1px rgba(0,0,0,0.07);
+}
+
+.card-section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: var(--text-on-page);
+}
+
+/* ── Goal form inputs & button inside .card ── */
+.goals-page .card input {
+    display: block;
+    width: 100%;
+    font-size: 1rem;
+    font-family: inherit;
+    margin-top: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #cfc4dc;
+    background: #faf8fc;
+    color: var(--text-on-page);
+    min-height: 44px;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.goals-page .card input:focus {
+    border-color: var(--btn-primary-bg);
+    box-shadow: 0 0 0 2px rgba(79,58,99,0.18);
+}
+
+.goals-page .card button {
+    display: block;
+    width: 100%;
+    font-size: 1rem;
+    font-family: inherit;
+    font-weight: 700;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: none;
+    background: var(--btn-primary-bg);
+    color: #fff;
+    cursor: pointer;
+    min-height: 44px;
+    transition: background 0.15s;
+}
+
+.goals-page .card button:hover,
+.goals-page .card button:focus {
+    background: var(--btn-primary-hover);
+}
+
+/* ── Section labels ── */
+.goals-page h2.screen-title {
+    font-size: 1.125rem;
+    margin-top: 16px;
+    margin-bottom: 8px;
+}
+
+/* ── Goal cards ── */
+.goal-card {
+    background: #fff;
+    border-radius: var(--card-radius);
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.goal-card h3 {
+    margin: 0 0 6px 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-on-page);
+}
+
+.goal-numbers {
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 0.25rem 0;
+    color: var(--text-on-page);
+}
+
+.goal-percent {
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    margin: 2px 0;
+}
+
+.goal-date {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin: 8px 0;
+}
+
+.goal-done {
+    color: var(--accent-income);
+    font-weight: 700;
+    margin: 8px 0 4px 0;
+}
+
+/* Active / complete border accents */
+.goal-incomplete {
+    border-left: 6px solid var(--accent-expense);
+}
+
+.goal-complete {
+    border-left: 6px solid #2ecc71;
+    background-color: #eafaf1;
+}
+
+/* ── Progress bar ── */
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #ddd;
+    border-radius: 10px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--btn-primary-bg);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.goal-complete .progress-fill {
+    background: #2ecc71;
+}
+
+/* ── Goal action buttons ── */
+.goal-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.goal-actions button {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    min-height: 40px;
+    background: var(--btn-primary-bg);
+    color: #fff;
+    transition: background 0.15s;
+}
+
+.goal-actions button:hover,
+.goal-actions button:focus {
+    background: var(--btn-primary-hover);
+}
+
+.goal-actions .btn-delete {
+    background: #e74c3c;
+}
+
+.goal-actions .btn-delete:hover,
+.goal-actions .btn-delete:focus {
+    background: #c0392b;
+}
+
+/* ── Goals list containers ── */
+#goals-list,
+#completed-goals-list {
+    margin-top: 4px;
+}
+
+/* ── Modal ── */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+}
+
+.modal.hidden {
+    display: none !important;
+    pointer-events: none !important;
+}
+
+.modal-content {
+    background: #fff;
+    color: var(--text-on-page);
+    border-radius: 16px;
+    padding: 20px;
+    max-width: min(340px, 100% - 24px);
+    width: 90%;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.modal-content label {
+    display: block;
+    font-weight: 600;
+    margin: 12px 0 4px 0;
+    font-size: 0.9375rem;
+}
+
+.modal-content input,
+.modal-content select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    font-family: inherit;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn-primary {
+    flex: 1;
+    padding: 12px 14px;
+    background: var(--btn-primary-bg);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    min-height: 44px;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: var(--btn-primary-hover);
+}
+
+.btn-secondary {
+    flex: 1;
+    padding: 12px 14px;
+    background: #ece8f0;
+    color: var(--text-on-page);
+    border: 1px solid #cfc4dc;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    min-height: 44px;
+}
+
+.hidden {
+    display: none !important;
+    pointer-events: none !important;
+}
+
+/* ── Bottom nav ── */
+.navigationtab {
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    min-height: var(--nav-h);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background-color: #fff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-top: 1px solid #d8cfe5;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+    z-index: var(--z-nav);
+}
+
+.nav-item {
+    text-decoration: none;
+    color: #3d3548;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    min-width: 64px;
+    min-height: 44px;
+    padding: 4px 8px;
+}
+
+.nav-item i {
+    font-size: 22px;
+    margin-bottom: 2px;
+}
+
+.nav-item.active {
+    color: var(--btn-primary-bg);
+}
