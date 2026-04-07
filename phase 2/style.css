@@ -1,7 +1,7 @@
 /* Mobile-first: ~390px frame; min 16px body text; accessible contrast */
 :root {
     --frame-max: 390px;
-    --bg-page: #e8dff2;
+    --bg-page: #5A7C61;
     --text-on-page: #1a1224;
     --text-muted: #4a3d55;
     --btn-primary-bg: #4f3a63;
@@ -27,7 +27,7 @@ html {
 
 body {
     margin: 0;
-    background-color: #4C6B51;
+    background-color: rgb(12, 3, 3);
     color: var(--text-on-page);
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     font-size: 16px;
@@ -65,8 +65,8 @@ body {
 }
 
 .screen-subtitle {
-    font-size: 0.9375rem;
-    color: var(--text-muted);
+    font-size: 1rem;
+    color: black;
     margin: 0 0 8px 0;
     line-height: 1.4;
 }
@@ -564,7 +564,7 @@ body {
     border-radius: 10px;
     background: var(--btn-primary-bg);
     color: #fff;
-    border: none;
+   border: 2px solid #FFFFFF;
     font-family: inherit;
     font-weight: 700;
     font-size: 0.875rem;

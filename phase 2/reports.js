@@ -100,9 +100,43 @@ function renderChart() {
                 backgroundColor: colors
             }]
         },
-        options: {
+   options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    ticks: {
+             
+                        color: "#FFFFFF", 
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        }
+                    },
+                    grid: {
+                        
+                        color: "rgba(255, 255, 255, 0.1)" 
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: "#FFFFFF",
+                        font: {
+                            size: 11
+                        }
+                    },
+                    grid: {
+                        display: false 
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#FFFFFF" 
+                    }
+                }
+            }
         }
     });
 }
