@@ -57,7 +57,8 @@ body {
     padding: 25px;
     border-radius: 20px 20px 0 0; /* Rounded top corners */
     flex-grow: 1; /* Makes card stretch to fill space */
-    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
+    /* Shadow below only — upward offset was a visible dark line above the panel */
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
     max-width: 600px;
     align-self: center; /* Centers card on wide screens */
     width: -webkit-fill-available;
@@ -70,7 +71,6 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-top: 20px;
-    border-bottom: 1px solid #eee;
     padding-bottom: 5px;
 }
 

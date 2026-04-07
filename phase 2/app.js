@@ -217,7 +217,7 @@ function updateSpentTodayDisplay() {
     if (headerEl) {
         headerEl.textContent = formatCurrency(computeSpentToday());
     }
-        const cardEl = document.getElementById('spent-today-amount');
+    const cardEl = document.getElementById('spent-today-amount');
     if (cardEl) {
         cardEl.textContent = formatCurrency(computeSpentToday());
     }

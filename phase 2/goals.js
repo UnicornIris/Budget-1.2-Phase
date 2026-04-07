@@ -61,7 +61,32 @@ function getMonthsLeft(date) {
     return Math.max(1, (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth()));
 }
 
-// ... toggleView and editGoal remain the same ...
+function editGoal(id) {
+    const goals = loadGoals();
+    const goal = goals.find((g) => g.id === id);
+    if (!goal) return;
+
+    const name = prompt("Goal name:", goal.name);
+    if (name === null) return;
+    const amountStr = prompt("Target amount:", String(goal.amount));
+    if (amountStr === null) return;
+    const date = prompt("Due date (YYYY-MM-DD):", goal.date);
+    if (date === null) return;
+
+    const amount = parseFloat(amountStr);
+    if (!name.trim() || Number.isNaN(amount) || amount <= 0 || !date.trim()) {
+        alert("Please enter valid name, amount, and date.");
+        return;
+    }
+
+    goal.name = name.trim();
+    goal.amount = amount;
+    goal.date = date.trim();
+    if (goal.saved > goal.amount) goal.saved = goal.amount;
+
+    saveGoals(goals);
+    renderGoals();
+}
 
 function addMoney(id) {
     const goals = loadGoals();
