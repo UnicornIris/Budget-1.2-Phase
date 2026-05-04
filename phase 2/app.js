@@ -190,6 +190,8 @@ const barExpensesEl = document.getElementById('bar-expenses');
 const progressPeriodContextEl = document.getElementById('progress-period-context');
 const incomeEntriesView = document.getElementById('income-entries-view');
 const incomeEntriesList = document.getElementById('income-entries-list');
+const incomeInsightsSummary = document.getElementById('income-insights-summary');
+const incomeInsightsGrid = document.getElementById('income-insights-grid');
 const incomeListBackBtn = document.getElementById('income-list-back-btn');
 const incomeListAddBtn = document.getElementById('income-list-add-btn');
 const incomeListPeriodLabel = document.getElementById('income-list-period-label');
@@ -209,6 +211,15 @@ const btnOpenExpenseModal = document.getElementById('btn-open-expense-modal');
 const btnOpenExpenseList = document.getElementById('btn-open-expense-list');
 const expenseSaveBtn = document.getElementById('expense-save-btn');
 const expenseCancelBtn = document.getElementById('expense-cancel-btn');
+const keyboardDemo = document.getElementById('keyboard-demo');
+
+function showKeyboardDemo() {
+    if (keyboardDemo) keyboardDemo.classList.remove('hidden');
+}
+
+function hideKeyboardDemo() {
+    if (keyboardDemo) keyboardDemo.classList.add('hidden');
+}
 
 function populateIncomeSourceSelect() {
     const sel = document.getElementById('income-source');
@@ -323,11 +334,14 @@ function openEditModal(id) {
     editAmount.value = t.amount;
     editCategory.value = t.category;
     editModal.classList.remove('hidden');
+    showKeyboardDemo();
+    editName.focus();
 }
 
 function closeEditModal() {
     editingTransactionId = null;
     if (editModal) editModal.classList.add('hidden');
+    hideKeyboardDemo();
 }
 
 function saveEditedTransaction() {
@@ -385,24 +399,27 @@ function openIncomeModal(existingId) {
     if (existingId) {
         const e = incomeEntries.find(x => x.id === existingId);
         if (!e) return;
-        if (titleEl) titleEl.textContent = 'Edit income';
+        if (titleEl) titleEl.textContent = 'Edit deposit';
         if (nameEl) nameEl.value = e.name;
         if (amountEl) amountEl.value = String(e.amount);
         if (dateEl) dateEl.value = e.date;
         if (sourceEl) sourceEl.value = INCOME_SOURCES.includes(e.source) ? e.source : 'Other';
     } else {
-        if (titleEl) titleEl.textContent = 'Add income';
+        if (titleEl) titleEl.textContent = 'Add deposit';
         if (nameEl) nameEl.value = '';
         if (amountEl) amountEl.value = '';
         if (dateEl) dateEl.value = formatDateForStorage(new Date());
         if (sourceEl) sourceEl.value = 'Salary';
     }
     incomeModal.classList.remove('hidden');
+    showKeyboardDemo();
+    if (nameEl) nameEl.focus();
 }
 
 function closeIncomeModal() {
     editingIncomeId = null;
     if (incomeModal) incomeModal.classList.add('hidden');
+    hideKeyboardDemo();
 }
 
 function saveIncomeFromModal() {
@@ -438,6 +455,7 @@ function saveIncomeFromModal() {
     saveIncome(incomeEntries);
     closeIncomeModal();
     updateProgressSummary();
+    renderIncomeInsights();
     renderIncomeEntriesList();
 }
 
@@ -445,7 +463,51 @@ function deleteIncomeEntry(id) {
     incomeEntries = incomeEntries.filter(i => i.id !== id);
     saveIncome(incomeEntries);
     updateProgressSummary();
+    renderIncomeInsights();
     renderIncomeEntriesList();
+}
+
+function renderIncomeInsights() {
+    if (!incomeInsightsSummary || !incomeInsightsGrid) return;
+
+    const rows = getFilteredIncomeEntries();
+    const totalsBySource = {};
+    let largest = 0;
+    let largestSource = 'None';
+
+    rows.forEach((entry) => {
+        totalsBySource[entry.source] = (totalsBySource[entry.source] || 0) + entry.amount;
+    });
+
+    Object.entries(totalsBySource).forEach(([source, total]) => {
+        if (total > largest) {
+            largest = total;
+            largestSource = source;
+        }
+    });
+
+    if (rows.length === 0) {
+        incomeInsightsSummary.textContent = 'No income in the selected period yet.';
+        incomeInsightsGrid.innerHTML = '';
+        return;
+    }
+
+    const totalAmount = rows.reduce((sum, entry) => sum + entry.amount, 0);
+    incomeInsightsSummary.textContent =
+        rows.length + ' deposits totaling ' + formatCurrency(totalAmount) + '. Largest source: ' + largestSource + '.';
+
+    const cards = [
+        { label: 'Deposits', value: String(rows.length) },
+        { label: 'Sources', value: String(Object.keys(totalsBySource).length) },
+        { label: 'Largest', value: formatCurrency(largest) }
+    ];
+
+    incomeInsightsGrid.innerHTML = cards.map((card) => `
+        <div class="stat-block">
+            <span class="stat-label">${escapeHtml(card.label)}</span>
+            <span class="stat-value">${escapeHtml(card.value)}</span>
+        </div>
+    `).join('');
 }
 
 function renderIncomeEntriesList() {
@@ -491,6 +553,7 @@ function showIncomeEntriesView() {
     if (incomeListPeriodLabel) {
         incomeListPeriodLabel.textContent = 'Showing: ' + formatPeriodLabel(selectedPeriod);
     }
+    renderIncomeInsights();
     renderIncomeEntriesList();
     if (incomeEntriesView) incomeEntriesView.classList.remove('hidden');
 }
@@ -524,11 +587,14 @@ function openExpenseModal(existingId) {
         if (categoryEl) categoryEl.value = 'Other';
     }
     expenseModal.classList.remove('hidden');
+    showKeyboardDemo();
+    if (nameEl) nameEl.focus();
 }
 
 function closeExpenseModal() {
     editingTransactionId = null;
     if (expenseModal) expenseModal.classList.add('hidden');
+    hideKeyboardDemo();
 }
 
 function saveExpenseFromModal() {
@@ -683,6 +749,7 @@ function selectPeriod(period) {
         if (incomeListPeriodLabel) {
             incomeListPeriodLabel.textContent = 'Showing: ' + formatPeriodLabel(selectedPeriod);
         }
+        renderIncomeInsights();
         renderIncomeEntriesList();
     }
     
@@ -713,16 +780,12 @@ if (periodModal) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(STORAGE_KEY_INCOME);
-    transactions = [];
-    incomeEntries = [];
-
     populateIncomeSourceSelect();
     populateExpenseCategorySelect(); 
     updateSpentTodayDisplay();
     updateProgressSummary(); 
     if (periodLabel) periodLabel.textContent = formatPeriodLabel(selectedPeriod);
+    renderIncomeInsights();
 });
 
 function getCurrencySymbol() {

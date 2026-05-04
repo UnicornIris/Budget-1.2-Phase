@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Activity — Budget</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="vendor/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -58,16 +58,16 @@
     </div>
 
     <div class="card income-tools-card">
-        <p class="label">Log your income</p>
-        <p class="hint income-tools-hint">Record paychecks, refunds, and other money in.</p>
+        <p class="label">Income review</p>
+        <p class="hint income-tools-hint">Track pay history, source totals, and recent deposits.</p>
         <div class="income-tools-row">
-            <button type="button" id="btn-open-income-modal" class="btn-income-tool">Add income</button>
-            <button type="button" id="btn-open-income-list" class="btn-income-tool btn-income-tool-secondary">View entries</button>
+            <button type="button" id="btn-open-income-modal" class="btn-income-tool">Add deposit</button>
+            <button type="button" id="btn-open-income-list" class="btn-income-tool btn-income-tool-secondary">Open pay history</button>
         </div>
     </div>
     <div class="card income-tools-card">
-        <p class="label">Log your expenses</p>
-        <p class="hint income-tools-hint">Record rent, food, and other transactions.</p>
+        <p class="label">Expense capture</p>
+        <p class="hint income-tools-hint">Quick-record purchases, then edit categories from the daily list.</p>
         <div class="income-tools-row">
             <button type="button" id="btn-open-expense-modal" class="btn-income-tool">
                 Add expense
@@ -97,17 +97,22 @@
     <div class="view-header view-header-stacked">
         <div class="view-header-row">
             <button type="button" id="income-list-back-btn" class="back-btn" aria-label="Back">← Back</button>
-            <h2 class="view-title">Income entries</h2>
+            <h2 class="view-title">Income review</h2>
         </div>
         <p class="view-subtitle" id="income-list-period-label">For selected period</p>
-        <button type="button" id="income-list-add-btn" class="btn-add-inline">+ Add income</button>
+        <div id="income-insights-card" class="card progress-summary-card">
+            <p class="label">Source mix</p>
+            <p class="progress-context" id="income-insights-summary">No income in the selected period yet.</p>
+            <div class="progress-stats-row" id="income-insights-grid"></div>
+        </div>
+        <button type="button" id="income-list-add-btn" class="btn-add-inline">+ Add deposit</button>
     </div>
     <ul id="income-entries-list" class="transactions-list"></ul>
 </div>
 
 <div id="income-modal" class="modal hidden">
     <div class="modal-content">
-        <h3 id="income-modal-title">Add income</h3>
+        <h3 id="income-modal-title">Add deposit</h3>
         <label for="income-name">Description</label>
         <input type="text" id="income-name" placeholder="e.g. Paycheck, Tax refund">
         <label for="income-amount">Amount ($)</label>
@@ -192,12 +197,51 @@
 
 <div class="fab-bar">
     <button type="button" id="quick-add-btn" class="fab" onclick="toggleSandra()">
-        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+        <span class="glyph-badge" aria-hidden="true">+</span>
         <span class="fab-label">Quick add purchase</span>
     </button>
     <button type="button" id="spent-today-btn" class="fab fab-secondary" onclick="showTodayTransactionsView()">
         <span class="fab-label">Spent today</span>
     </button>
+</div>
+
+<div id="keyboard-demo" class="keyboard-demo hidden" aria-hidden="true">
+    <div class="keyboard-demo-header">
+        <span>On-screen keyboard demo</span>
+        <span>Visible for submission screenshots</span>
+    </div>
+    <div class="keyboard-demo-keys">
+        <span class="keyboard-key">1</span>
+        <span class="keyboard-key">2</span>
+        <span class="keyboard-key">3</span>
+        <span class="keyboard-key">4</span>
+        <span class="keyboard-key">5</span>
+        <span class="keyboard-key">6</span>
+        <span class="keyboard-key">7</span>
+        <span class="keyboard-key">8</span>
+        <span class="keyboard-key">9</span>
+        <span class="keyboard-key">0</span>
+        <span class="keyboard-key">Q</span>
+        <span class="keyboard-key">W</span>
+        <span class="keyboard-key">E</span>
+        <span class="keyboard-key">R</span>
+        <span class="keyboard-key">T</span>
+        <span class="keyboard-key">Y</span>
+        <span class="keyboard-key">U</span>
+        <span class="keyboard-key">I</span>
+        <span class="keyboard-key">O</span>
+        <span class="keyboard-key">P</span>
+        <span class="keyboard-key">A</span>
+        <span class="keyboard-key">S</span>
+        <span class="keyboard-key">D</span>
+        <span class="keyboard-key">F</span>
+        <span class="keyboard-key">G</span>
+        <span class="keyboard-key">H</span>
+        <span class="keyboard-key">J</span>
+        <span class="keyboard-key">K</span>
+        <span class="keyboard-key">L</span>
+        <span class="keyboard-key wide">Return</span>
+    </div>
 </div>
 
 <div id="purch-modal" class="hidden">
@@ -224,10 +268,14 @@
 <script>
 function toggleSandra() {
     const modal = document.getElementById('purch-modal');
+    const keyboard = document.getElementById('keyboard-demo');
     if (!modal) return;
     modal.classList.toggle('hidden');
     if (!modal.classList.contains('hidden')) {
+        if (keyboard) keyboard.classList.remove('hidden');
         document.getElementById('sandra-amount').focus();
+    } else if (keyboard) {
+        keyboard.classList.add('hidden');
     }
 }
 
