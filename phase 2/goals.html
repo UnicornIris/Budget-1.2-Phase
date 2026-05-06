@@ -14,8 +14,10 @@
         <h1 class="screen-title">Goals</h1>
     </header>
 
-    <div class="card">
+    <div class="card section-card">
+        <p class="section-kicker">Planning</p>
         <h3 class="card-section-title">Create goal</h3>
+        <p class="section-copy">Set a target, then track what still needs to be saved each month.</p>
         <input type="text" id="goal-name" placeholder="Goal name (e.g. Laptop)">
         <input type="number" id="goal-amount" placeholder="Target amount">
         <input type="date" id="goal-date">
@@ -23,9 +25,15 @@
         <p id="goal-form-helper" class="goal-form-helper">Create a goal, then manage savings and edits directly in each card.</p>
     </div>
 
-    <h2 class="screen-title" style="font-size:1.125rem;margin-top:16px;">Active goals</h2>
+    <div class="section-heading">
+        <p class="section-kicker">In progress</p>
+        <h2 class="section-title">Active goals</h2>
+    </div>
     <div id="goals-list" class="goals-list"></div>
-    <h2 class="screen-title" style="font-size:1.125rem;margin-top:16px;">Completed goals</h2>
+    <div class="section-heading">
+        <p class="section-kicker">Finished</p>
+        <h2 class="section-title">Completed goals</h2>
+    </div>
     <div id="completed-goals-list"></div>
 </div>
 
@@ -74,7 +82,7 @@
     </div>
 
     <div class="keyboard-layout keyboard-layout-number">
-        <div class="keyboard-number-grid">
+        <div class="activity-number-pad">
             <span class="keyboard-key">1</span>
             <span class="keyboard-key">2</span>
             <span class="keyboard-key">3</span>
@@ -88,10 +96,8 @@
             <span class="keyboard-key">0</span>
             <span class="keyboard-key keyboard-key-action">delete</span>
         </div>
-        <div class="keyboard-number-footer">
-            <span class="keyboard-key keyboard-key-action keyboard-key-medium">#+=</span>
-            <span class="keyboard-key keyboard-key-space">space</span>
-            <span class="keyboard-key keyboard-key-action keyboard-key-medium">done</span>
+        <div class="activity-number-actions">
+            <span class="keyboard-key keyboard-key-action keyboard-key-wide">done</span>
         </div>
     </div>
 </div>

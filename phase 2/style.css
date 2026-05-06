@@ -4,12 +4,14 @@
     --device-height: 960px;
     --bg-page: #dce8dd;
     --text-on-page: #1a1224;
-    --text-muted: #2f2437;
+    --text-muted: #4a3d55;
     --btn-primary-bg: #4f3a63;
     --btn-primary-hover: #3d2d4d;
     --accent-income: #1e7a4a;
     --accent-expense: #b03028;
     --card-radius: 10px;
+    --surface-subtle: #f8f5fb;
+    --border-subtle: #e7dfef;
     --nav-h: 52px;
     --fab-above-nav: 56px;
     --z-nav: 1000;
@@ -80,11 +82,12 @@ body {
 .card {
     background-color: #fff;
     border-radius: var(--card-radius);
-    padding: 10px 12px;
+    padding: 12px 14px;
     flex: 1;
     min-width: 0;
+    border: 1px solid var(--border-subtle);
     /* Downward bias so blur doesn’t read as a dark rule above the card */
-    box-shadow: 0 2px 6px -1px rgba(0, 0, 0, 0.07);
+    box-shadow: 0 2px 8px -2px rgba(26, 18, 36, 0.09);
 }
 
 .card .label {
@@ -118,6 +121,15 @@ body {
     line-height: 1.35;
 }
 
+.section-kicker {
+    margin: 0 0 4px 0;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
 .app-container {
     display: block;
     flex: 1;
@@ -131,6 +143,201 @@ body {
 
 .app-container.with-fab-bar {
     padding-bottom: calc(var(--nav-h) + var(--fab-above-nav) + env(safe-area-inset-bottom, 0px));
+}
+
+.activity-balance-card,
+.activity-filter-card,
+.activity-composer-card,
+.activity-ledger-card {
+    margin-bottom: 10px;
+}
+
+.activity-balance-card {
+    padding: 14px 16px;
+}
+
+.activity-balance-row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.25fr);
+    gap: 14px;
+    align-items: center;
+}
+
+.activity-balance-main .label {
+    margin-bottom: 4px;
+}
+
+.activity-balance-main .value-primary {
+    margin-bottom: 4px;
+    font-size: 1.85rem;
+    line-height: 1.05;
+}
+
+.activity-balance-main .hint {
+    margin: 0;
+    font-size: 0.84rem;
+}
+
+.activity-balance-side {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.activity-mini-stat {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 9px 11px;
+    min-width: 0;
+}
+
+.activity-mini-stat .stat-label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.72rem;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+.activity-mini-stat .stat-value {
+    font-size: 0.82rem;
+    line-height: 1.18;
+    overflow-wrap: anywhere;
+}
+
+.activity-card-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: start;
+    margin-bottom: 10px;
+}
+
+.activity-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.activity-chip,
+.activity-segment {
+    min-height: 40px;
+    border-radius: 999px;
+    border: 1px solid #cfc4dc;
+    background: #fff;
+    color: var(--text-on-page);
+    padding: 8px 14px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.activity-chip.active,
+.activity-segment.active {
+    background: var(--btn-primary-bg);
+    border-color: var(--btn-primary-bg);
+    color: #fff;
+}
+
+.activity-segmented {
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.activity-form-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 10px;
+}
+
+.activity-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--text-on-page);
+}
+
+.activity-field input,
+.activity-field select {
+    min-height: 44px;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+    background: var(--surface-subtle);
+    color: var(--text-on-page);
+    font: inherit;
+    padding: 10px 12px;
+}
+
+.activity-form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.activity-helper-copy {
+    margin: 10px 0 0 0;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+}
+
+.activity-ledger-list {
+    margin-top: 10px;
+}
+
+.activity-ledger-item {
+    gap: 10px;
+    align-items: center;
+}
+
+.activity-ledger-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+}
+
+.activity-ledger-tag {
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.tag-income {
+    background: rgba(30, 122, 74, 0.12);
+    color: var(--accent-income);
+}
+
+.tag-expense {
+    background: rgba(176, 48, 40, 0.12);
+    color: var(--accent-expense);
+}
+
+.activity-ledger-right {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 8px;
+}
+
+.activity-ledger-delete {
+    border: none;
+    background: var(--surface-subtle);
+    color: #5b5168;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 999px;
 }
 
 .period-card {
@@ -826,6 +1033,44 @@ body {
 .keyboard-layout-number .keyboard-key-action {
     font-size: 0.95rem;
 }
+
+.activity-keyboard-demo .keyboard-layout-number {
+    gap: 10px;
+}
+
+.activity-number-pad {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 88px));
+    gap: 10px;
+    justify-content: center;
+}
+
+.activity-number-pad .keyboard-key {
+    height: 56px;
+    border-radius: 14px;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.activity-number-pad .keyboard-key-action {
+    background: linear-gradient(180deg, #b2bac7 0%, #9ca5b3 100%);
+    font-size: 1rem;
+}
+
+.activity-number-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.activity-number-actions .keyboard-key {
+    max-width: 292px;
+    width: 100%;
+    height: 48px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
 .hidden {
     display: none !important;
     pointer-events: none !important;
@@ -1003,8 +1248,8 @@ body {
     font-family: inherit;
     font-weight: 600;
     color: var(--text-on-page);
-    background-color: #faf8fc;
-    border: 1px solid #cfc4dc;
+    background-color: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
     border-radius: 10px;
     cursor: pointer;
     appearance: none;
@@ -1042,6 +1287,23 @@ body {
 }
 
 @media (max-width: 360px) {
+    .activity-balance-row,
+    .activity-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .activity-balance-side {
+        grid-template-columns: 1fr;
+    }
+
+    .activity-form-actions {
+        flex-direction: column;
+    }
+
+    .activity-ledger-right {
+        align-items: start;
+    }
+
     .keyboard-row {
         gap: 5px;
     }
@@ -1062,6 +1324,14 @@ body {
     .keyboard-number-grid .keyboard-key {
         height: 46px;
         font-size: 1.1rem;
+    }
+
+    .activity-number-pad {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .activity-number-pad .keyboard-key {
+        height: 50px;
     }
 
     .reports-controls {

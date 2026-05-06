@@ -27,6 +27,22 @@ const COLOR_INCOME_SOFT = 'rgba(30, 122, 74, 0.88)';
 const COLOR_SPEND = '#4f3a63';
 const COLOR_SPEND_SOFT = 'rgba(79, 58, 99, 0.88)';
 
+function getCurrencyPrefix() {
+    const currency = localStorage.getItem('userCurrency') || 'USD';
+    const map = { USD: '$', EUR: 'EUR ', GBP: 'GBP ', JPY: 'JPY ' };
+    return map[currency] || '$';
+}
+
+function formatCurrency(value) {
+    return (
+        getCurrencyPrefix() +
+        Number(value).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        })
+    );
+}
+
 function pad2(n) {
     return String(n).padStart(2, '0');
 }
@@ -240,7 +256,7 @@ function renderTransactions() {
                 <span class="transaction-name">${escapeHtml(t.name)}</span>
                 <span class="income-entry-meta">${formatDisplayDate(t.date)} · ${escapeHtml(t.category)}</span>
             </div>
-            <span class="${isIncome ? 'transaction-amount-income' : 'transaction-amount'}">${isIncome ? '+' : '−'}$${Math.abs(t.amount).toFixed(2)}</span>
+            <span class="${isIncome ? 'transaction-amount-income' : 'transaction-amount'}">${isIncome ? '+' : '−'}${formatCurrency(Math.abs(t.amount))}</span>
         `;
         list.appendChild(li);
     });
@@ -376,11 +392,7 @@ function renderChart() {
                             return (
                                 prefix +
                                 (typeof v === 'number'
-                                    ? '$' +
-                                      v.toLocaleString(undefined, {
-                                          minimumFractionDigits: 2,
-                                          maximumFractionDigits: 2
-                                      })
+                                    ? formatCurrency(v)
                                     : String(v))
                             );
                         }
@@ -408,8 +420,9 @@ function renderChart() {
                               font: { size: 10 },
                               color: chartTickColor(),
                               callback(v) {
-                                  if (v >= 1000) return '$' + (v / 1000).toFixed(0) + 'k';
-                                  return '$' + v;
+                                  const prefix = getCurrencyPrefix();
+                                  if (v >= 1000) return prefix + (v / 1000).toFixed(0) + 'k';
+                                  return prefix + v;
                               }
                           }
                       }

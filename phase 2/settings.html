@@ -10,47 +10,58 @@
 </head>
 <body>
 <div class="phone-frame">
-<header class="settings-header">
-    <button type="button" class="menu-btn" aria-label="Open Menu">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-    <h1>Settings</h1>
+<header class="screen-header settings-header">
+    <h1 class="screen-title">Settings</h1>
 </header>
 
 <main class="settings-container app-container">
-    <section class="settings-group">
-        <h2 class="group-title">Preferences</h2>
-        <div class="setting-item">
-            <div class="setting-info">
-                <i class="fa-solid fa-money-bill-transfer"></i>
-                <span>Primary Currency: <span id="currencyDisplay">USD</span></span>
+    <section class="card settings-hero">
+        <p class="section-kicker">Preferences</p>
+        <h2>Manage your budget app</h2>
+        <p id="settingsStatus" class="settings-copy">Choose how amounts are displayed and manage the budget data stored on this device.</p>
+    </section>
+
+    <section class="card settings-group">
+        <div class="settings-group-header">
+            <div>
+                <p class="section-kicker">Display</p>
+                <h2 class="group-title">Currency</h2>
+                <p class="settings-copy" id="currencyDetail">USD will format Activity, Goals, and Reports totals.</p>
             </div>
-            <button type="button" class="toggle-btn" id="currencyToggle" onclick="toggleCurrency()">Toggle USD/EUR</button>
+            <div class="settings-current-chip">Current: <span id="currentCurrency">USD</span></div>
+        </div>
+        <div class="settings-choice-row">
+            <button type="button" class="settings-choice active" data-currency-choice="USD">USD</button>
+            <button type="button" class="settings-choice" data-currency-choice="EUR">EUR</button>
+            <button type="button" class="settings-choice" data-currency-choice="GBP">GBP</button>
+            <button type="button" class="settings-choice" data-currency-choice="JPY">JPY</button>
         </div>
     </section>
 
-    <section class="settings-group">
-        <h2 class="group-title">Notifications</h2>
-        <div class="setting-item">
-            <div class="setting-info">
-                <i class="fa-solid fa-bell"></i>
-                <span>Low Balance Alerts</span>
+    <section class="card settings-group">
+        <div class="settings-group-header">
+            <div>
+                <p class="section-kicker">Storage</p>
+                <h2 class="group-title">Data On This Device</h2>
+                <p class="settings-copy">Review what is currently saved in this budget app and clear it if you want to start fresh.</p>
             </div>
-            <label class="switch">
-                <input type="checkbox" id="lowBalanceToggle" onchange="saveSettings()" checked>
-                <span class="slider"></span>
-            </label>
         </div>
-        <div class="setting-item">
-            <div class="setting-info">
-                <i class="fa-solid fa-calendar-check"></i>
-                <span>Bill Due Reminders</span>
+        <div class="settings-data-grid">
+            <div class="settings-data-card">
+                <span class="settings-data-label">Transactions</span>
+                <strong id="dataTransactions">0</strong>
             </div>
-            <label class="switch">
-                <input type="checkbox" id="billDueToggle" onchange="saveSettings()" checked>
-                <span class="slider"></span>
-            </label>
+            <div class="settings-data-card">
+                <span class="settings-data-label">Income entries</span>
+                <strong id="dataIncome">0</strong>
+            </div>
+            <div class="settings-data-card">
+                <span class="settings-data-label">Goals</span>
+                <strong id="dataGoals">0</strong>
+            </div>
         </div>
+        <p class="settings-note">This only clears data stored in this prototype on this device.</p>
+        <button type="button" id="clearDemoDataBtn" class="settings-danger-btn">Clear all budget data</button>
     </section>
 </main>
 

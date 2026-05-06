@@ -1,13 +1,13 @@
-/**
- * Finance App - Phase 2
- * Period summary, spent today, income logging, period filter
- */
+const STORAGE_KEY = "budget-transactions";
+const STORAGE_KEY_INCOME = "budget-income";
+const STORAGE_KEY_PERIOD = "budget-period";
+const CATEGORIES = ["Food", "Coffee", "Transport", "Shopping", "Entertainment", "Bills", "Other"];
+const INCOME_SOURCES = ["Salary", "Freelance", "Side job", "Gift", "Refund", "Other"];
 
-const STORAGE_KEY = 'budget-transactions';
-const STORAGE_KEY_INCOME = 'budget-income';
-const STORAGE_KEY_PERIOD = 'budget-period';
-const CATEGORIES = ['Food', 'Coffee', 'Transport', 'Shopping', 'Entertainment', 'Bills', 'Other'];
-const INCOME_SOURCES = ['Salary', 'Freelance', 'Side job', 'Gift', 'Refund', 'Other'];
+let entryMode = "expense";
+let ledgerFilter = "all";
+let showAllEntries = false;
+let selectedPeriod = loadSelectedPeriod();
 
 function getDefaultTransactions() {
     const today = formatDateForStorage(new Date());
@@ -15,32 +15,33 @@ function getDefaultTransactions() {
     const weekAgo = new Date(d);
     weekAgo.setDate(d.getDate() - 5);
     return [
-        { id: '1', name: 'Coffee', amount: 5.50, category: 'Coffee', date: today },
-        { id: '2', name: 'Lunch', amount: 12.99, category: 'Food', date: today },
-        { id: '3', name: 'Uber', amount: 8.25, category: 'Transport', date: today },
-        { id: '4', name: 'Groceries', amount: 45.00, category: 'Shopping', date: formatDateForStorage(weekAgo) },
-        { id: '5', name: 'Netflix', amount: 15.99, category: 'Bills', date: formatDateForStorage(d) }
+        { id: "1", name: "Coffee", amount: 5.5, category: "Coffee", date: today },
+        { id: "2", name: "Lunch", amount: 12.99, category: "Food", date: today },
+        { id: "3", name: "Uber", amount: 8.25, category: "Transport", date: today },
+        { id: "4", name: "Groceries", amount: 45.0, category: "Shopping", date: formatDateForStorage(weekAgo) },
+        { id: "5", name: "Netflix", amount: 15.99, category: "Bills", date: formatDateForStorage(d) }
     ];
 }
 
 function getDefaultIncome() {
     const d = new Date();
-    const y = d.getFullYear(), m = d.getMonth();
-    const p = n => String(n).padStart(2, '0');
+    const y = d.getFullYear();
+    const m = d.getMonth();
+    const pad = (n) => String(n).padStart(2, "0");
     return [
-        { id: generateId(), name: 'Salary', date: `${y}-${p(m + 1)}-01`, amount: 2500, source: 'Salary' },
-        { id: generateId(), name: 'Freelance', date: `${y}-${p(m + 1)}-15`, amount: 1000, source: 'Freelance' }
+        { id: generateId(), name: "Salary", date: `${y}-${pad(m + 1)}-01`, amount: 2500, source: "Salary" },
+        { id: generateId(), name: "Freelance", date: `${y}-${pad(m + 1)}-15`, amount: 1000, source: "Freelance" }
     ];
 }
 
 function normalizeIncomeEntry(raw) {
-    if (!raw || typeof raw !== 'object') return null;
+    if (!raw || typeof raw !== "object") return null;
     const amount = Math.max(0, parseFloat(raw.amount) || 0);
     const date = raw.date || formatDateForStorage(new Date());
-    const source = INCOME_SOURCES.includes(raw.source) ? raw.source : 'Other';
+    const source = INCOME_SOURCES.includes(raw.source) ? raw.source : "Other";
     return {
         id: raw.id || generateId(),
-        name: (raw.name && String(raw.name).trim()) || 'Income',
+        name: (raw.name && String(raw.name).trim()) || "Income",
         amount,
         date,
         source
@@ -55,8 +56,8 @@ function loadTransactions() {
     return getDefaultTransactions();
 }
 
-function saveTransactions(tx) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tx));
+function saveTransactions(transactions) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
 }
 
 function loadIncome() {
@@ -70,26 +71,32 @@ function loadIncome() {
     return getDefaultIncome();
 }
 
-function saveIncome(income) {
-    localStorage.setItem(STORAGE_KEY_INCOME, JSON.stringify(income));
+function saveIncome(entries) {
+    localStorage.setItem(STORAGE_KEY_INCOME, JSON.stringify(entries));
 }
 
 function loadSelectedPeriod() {
-    return localStorage.getItem(STORAGE_KEY_PERIOD) || 'month';
+    return localStorage.getItem(STORAGE_KEY_PERIOD) || "month";
 }
 
 function saveSelectedPeriod(period) {
     localStorage.setItem(STORAGE_KEY_PERIOD, period);
 }
 
-function formatDateForStorage(d) {
-    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+function formatDateForStorage(date) {
+    return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
 }
 
-function formatCurrency(amt) {
+function formatShortDateDisplay(dateStr) {
+    const d = new Date(dateStr + "T12:00:00");
+    if (Number.isNaN(d.getTime())) return dateStr;
+    return d.getMonth() + 1 + "/" + d.getDate();
+}
+
+function formatCurrency(amount) {
     const currency = localStorage.getItem("userCurrency") || "USD";
-    const symbol = (currency === "EUR") ? "€" : "$";
-    return symbol + Number(amt).toFixed(2);
+    const map = { USD: "$", EUR: "EUR ", GBP: "GBP ", JPY: "JPY " };
+    return (map[currency] || "$") + Number(amount).toFixed(2);
 }
 
 function generateId() {
@@ -102,26 +109,19 @@ function getDateRangeForPeriod(period) {
     end.setHours(23, 59, 59, 999);
     start.setHours(0, 0, 0, 0);
 
-    if (period === '7') start.setDate(end.getDate() - 6);
-    else if (period === '14') start.setDate(end.getDate() - 13);
-    else if (period === '30') start.setDate(end.getDate() - 29);
+    if (period === "7") start.setDate(end.getDate() - 6);
+    else if (period === "14") start.setDate(end.getDate() - 13);
+    else if (period === "30") start.setDate(end.getDate() - 29);
     else start.setDate(1);
+
     return { start, end };
 }
 
 function formatPeriodLabel(period) {
     const { start, end } = getDateRangeForPeriod(period);
-    const fmt = d => (d.getMonth() + 1) + '/' + d.getDate();
-    if (period === 'month') return 'This month';
-    return fmt(start) + ' – ' + fmt(end);
-}
-
-function formatPeriodContextPhrase(period) {
-    if (period === 'month') return 'this month';
-    if (period === '7') return 'the last 7 days';
-    if (period === '14') return 'the last 14 days';
-    if (period === '30') return 'the last 30 days';
-    return 'the selected range';
+    const fmt = (d) => d.getMonth() + 1 + "/" + d.getDate();
+    if (period === "month") return "This month";
+    return fmt(start) + " – " + fmt(end);
 }
 
 function isDateInRange(dateStr, start, end) {
@@ -130,88 +130,35 @@ function isDateInRange(dateStr, start, end) {
     return d >= start && d <= end;
 }
 
-function getFilteredTotals() {
-    const { start, end } = getDateRangeForPeriod(selectedPeriod);
-    const income = incomeEntries
-        .filter(i => isDateInRange(i.date, start, end))
-        .reduce((sum, i) => sum + i.amount, 0);
-    const expenses = transactions
-        .filter(t => isDateInRange(t.date, start, end))
-        .reduce((sum, t) => sum + t.amount, 0);
-    return { income, expenses };
-}
-
-function getFilteredIncomeEntries() {
-    const { start, end } = getDateRangeForPeriod(selectedPeriod);
-    return incomeEntries
-        .filter(i => isDateInRange(i.date, start, end))
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-}
-
-function getFilteredExpenseEntries() {
-    const { start, end } = getDateRangeForPeriod(selectedPeriod);
-    return transactions
-        .filter(t => isDateInRange(t.date, start, end))
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-}
-
-function formatShortDateDisplay(dateStr) {
-    const d = new Date(dateStr + 'T12:00:00');
-    if (Number.isNaN(d.getTime())) return dateStr;
-    return (d.getMonth() + 1) + '/' + d.getDate() + '/' + d.getFullYear();
+function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 let transactions = loadTransactions();
 let incomeEntries = loadIncome();
-let selectedPeriod = loadSelectedPeriod();
-let editingTransactionId = null;
-let editingIncomeId = null;
 
-const spentTodayCard = document.getElementById('spent-today-card');
-const spentTodayAmount = document.getElementById('spent-today-amount');
-const todayTransactionsView = document.getElementById('today-transactions-view');
-const todayTransactionsList = document.getElementById('today-transactions-list');
-const backBtn = document.getElementById('back-btn');
-const editModal = document.getElementById('edit-modal');
-const editName = document.getElementById('edit-name');
-const editAmount = document.getElementById('edit-amount');
-const editCategory = document.getElementById('edit-category');
-const editSaveBtn = document.getElementById('edit-save-btn');
-const editCancelBtn = document.getElementById('edit-cancel-btn');
-const periodCard = document.getElementById('period-card');
-const periodLabel = document.getElementById('period-label');
-const periodModal = document.getElementById('period-modal');
-const balanceAmountEl = document.getElementById('balance-amount');
-const statIncomeEl = document.getElementById('stat-income');
-const statExpensesEl = document.getElementById('stat-expenses');
-const statNetEl = document.getElementById('stat-net');
-const barIncomeEl = document.getElementById('bar-income');
-const barExpensesEl = document.getElementById('bar-expenses');
-const progressPeriodContextEl = document.getElementById('progress-period-context');
-const incomeEntriesView = document.getElementById('income-entries-view');
-const incomeEntriesList = document.getElementById('income-entries-list');
-const incomeInsightsSummary = document.getElementById('income-insights-summary');
-const incomeInsightsGrid = document.getElementById('income-insights-grid');
-const incomeListBackBtn = document.getElementById('income-list-back-btn');
-const incomeListAddBtn = document.getElementById('income-list-add-btn');
-const incomeListPeriodLabel = document.getElementById('income-list-period-label');
-const incomeModal = document.getElementById('income-modal');
-const btnOpenIncomeModal = document.getElementById('btn-open-income-modal');
-const btnOpenIncomeList = document.getElementById('btn-open-income-list');
-const incomeSaveBtn = document.getElementById('income-save-btn');
-const incomeCancelBtn = document.getElementById('income-cancel-btn');
-
-const expenseEntriesView = document.getElementById('expense-entries-view');
-const expenseEntriesList = document.getElementById('expense-entries-list');
-const expenseListBackBtn = document.getElementById('expense-list-back-btn');
-const expenseListAddBtn = document.getElementById('expense-list-add-btn');
-const expenseListPeriodLabel = document.getElementById('expense-list-period-label');
-const expenseModal = document.getElementById('expense-modal');
-const btnOpenExpenseModal = document.getElementById('btn-open-expense-modal');
-const btnOpenExpenseList = document.getElementById('btn-open-expense-list');
-const expenseSaveBtn = document.getElementById('expense-save-btn');
-const expenseCancelBtn = document.getElementById('expense-cancel-btn');
-const keyboardDemo = document.getElementById('keyboard-demo');
+const balanceAmountEl = document.getElementById("balance-amount");
+const periodContextEl = document.getElementById("period-context");
+const statIncomeEl = document.getElementById("stat-income");
+const statExpensesEl = document.getElementById("stat-expenses");
+const todaySpentInlineEl = document.getElementById("today-spent-inline");
+const periodFilterButtons = Array.from(document.querySelectorAll("[data-period-filter]"));
+const entryModeButtons = Array.from(document.querySelectorAll("[data-entry-mode]"));
+const entryNameEl = document.getElementById("entry-name");
+const entryAmountEl = document.getElementById("entry-amount");
+const entryDateEl = document.getElementById("entry-date");
+const entryKindLabelEl = document.getElementById("entry-kind-label");
+const entryKindSelectEl = document.getElementById("entry-kind-select");
+const entrySaveBtn = document.getElementById("entry-save-btn");
+const entryClearBtn = document.getElementById("entry-clear-btn");
+const composerHintEl = document.getElementById("composer-hint");
+const activityListEl = document.getElementById("activity-list");
+const activityStatusEl = document.getElementById("activity-status");
+const activityFilterButtons = Array.from(document.querySelectorAll("[data-ledger-filter]"));
+const activityShowMoreBtn = document.getElementById("activity-show-more-btn");
+const keyboardDemo = document.getElementById("keyboard-demo");
 
 function setActivityKeyboardMode(mode) {
     if (!keyboardDemo) return;
@@ -220,625 +167,278 @@ function setActivityKeyboardMode(mode) {
 
 function showKeyboardDemo(target) {
     if (!keyboardDemo) return;
-    const type = target && typeof target.type === 'string' ? target.type : '';
-    const numericTypes = new Set(['number', 'date', 'time', 'month', 'week']);
-    setActivityKeyboardMode(numericTypes.has(type) ? 'number' : 'text');
-    keyboardDemo.classList.remove('hidden');
+    const type = target && typeof target.type === "string" ? target.type : "";
+    const numericTypes = new Set(["number", "date", "time", "month", "week"]);
+    setActivityKeyboardMode(numericTypes.has(type) ? "number" : "text");
+    keyboardDemo.classList.remove("hidden");
 }
 
 function hideKeyboardDemo() {
-    if (keyboardDemo) keyboardDemo.classList.add('hidden');
+    if (keyboardDemo) keyboardDemo.classList.add("hidden");
 }
 
 function dismissActivityKeyboard() {
     hideKeyboardDemo();
-    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+    if (document.activeElement && typeof document.activeElement.blur === "function") {
         document.activeElement.blur();
     }
 }
 
 function bindKeyboardAwareInput(input) {
     if (!input) return;
-    input.addEventListener('focus', () => showKeyboardDemo(input));
-    input.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            dismissActivityKeyboard();
-        }
+    input.addEventListener("focus", () => showKeyboardDemo(input));
+    input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") dismissActivityKeyboard();
     });
 }
 
-function populateIncomeSourceSelect() {
-    const sel = document.getElementById('income-source');
-    if (!sel) return;
-    sel.innerHTML = INCOME_SOURCES.map(s => `<option value="${s}">${s}</option>`).join('');
+function getFilteredTotals() {
+    const { start, end } = getDateRangeForPeriod(selectedPeriod);
+    const income = incomeEntries.filter((i) => isDateInRange(i.date, start, end)).reduce((sum, i) => sum + i.amount, 0);
+    const expenses = transactions.filter((t) => isDateInRange(t.date, start, end)).reduce((sum, t) => sum + t.amount, 0);
+    return { income, expenses };
 }
 
-function populateExpenseCategorySelect() {
-    const sel = document.getElementById('expense-category');
-    if (!sel) return;
-    sel.innerHTML = CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('');
-}
-
-function getTodayTransactions() {
+function getTodaySpent() {
     const today = formatDateForStorage(new Date());
-    return transactions.filter(t => t.date === today);
+    return transactions.filter((t) => t.date === today).reduce((sum, t) => sum + t.amount, 0);
 }
 
-function computeSpentToday() {
-    return getTodayTransactions().reduce((sum, t) => sum + t.amount, 0);
+function getLedgerRows() {
+    const { start, end } = getDateRangeForPeriod(selectedPeriod);
+    const rows = [];
+
+    transactions
+        .filter((entry) => isDateInRange(entry.date, start, end))
+        .forEach((entry) => {
+            rows.push({
+                id: entry.id,
+                type: "expense",
+                name: entry.name,
+                amount: entry.amount,
+                date: entry.date,
+                label: entry.category
+            });
+        });
+
+    incomeEntries
+        .filter((entry) => isDateInRange(entry.date, start, end))
+        .forEach((entry) => {
+            rows.push({
+                id: entry.id,
+                type: "income",
+                name: entry.name,
+                amount: entry.amount,
+                date: entry.date,
+                label: entry.source
+            });
+        });
+
+    rows.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return rows;
 }
 
-function updateSpentTodayDisplay() {
-    const headerEl = document.getElementById('spent-today-amount-header');
-    if (headerEl) {
-        headerEl.textContent = formatCurrency(computeSpentToday());
-    }
-    const cardEl = document.getElementById('spent-today-amount');
-    if (cardEl) {
-        cardEl.textContent = formatCurrency(computeSpentToday());
-    }
-}
-
-function updateProgressSummary() {
+function updateSummary() {
     const { income, expenses } = getFilteredTotals();
-    const net = income - expenses;
-    const maxVal = Math.max(income, expenses, 1);
-    const incomePct = Math.round((income / maxVal) * 100);
-    const expensesPct = Math.round((expenses / maxVal) * 100);
-
-    if (balanceAmountEl) balanceAmountEl.textContent = formatCurrency(net);
+    const balance = income - expenses;
+    if (balanceAmountEl) balanceAmountEl.textContent = formatCurrency(balance);
+    if (periodContextEl) periodContextEl.textContent = formatPeriodLabel(selectedPeriod);
     if (statIncomeEl) statIncomeEl.textContent = formatCurrency(income);
     if (statExpensesEl) statExpensesEl.textContent = formatCurrency(expenses);
-    if (statNetEl) {
-        statNetEl.textContent = formatCurrency(net);
-        statNetEl.classList.remove('stat-net-negative', 'stat-net-positive');
-        if (net < 0) statNetEl.classList.add('stat-net-negative');
-        else if (net > 0) statNetEl.classList.add('stat-net-positive');
+    if (todaySpentInlineEl) todaySpentInlineEl.textContent = formatCurrency(getTodaySpent());
+}
+
+function updatePeriodButtons() {
+    periodFilterButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.periodFilter === selectedPeriod);
+    });
+}
+
+function updateEntryModeButtons() {
+    entryModeButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.entryMode === entryMode);
+    });
+}
+
+function populateEntryKindSelect() {
+    if (!entryKindSelectEl || !entryKindLabelEl) return;
+    const options = entryMode === "expense" ? CATEGORIES : INCOME_SOURCES;
+    entryKindLabelEl.textContent = entryMode === "expense" ? "Category" : "Source";
+    entryKindSelectEl.innerHTML = options.map((value) => `<option value="${value}">${value}</option>`).join("");
+}
+
+function clearComposer(statusMessage) {
+    if (entryNameEl) entryNameEl.value = "";
+    if (entryAmountEl) entryAmountEl.value = "";
+    if (entryDateEl) entryDateEl.value = formatDateForStorage(new Date());
+    if (composerHintEl) {
+        composerHintEl.textContent = statusMessage || (entryMode === "expense"
+            ? "Save an expense without leaving the Activity screen."
+            : "Save an income entry without opening another dialog.");
     }
-    if (barIncomeEl) barIncomeEl.style.width = incomePct + '%';
-    if (barExpensesEl) barExpensesEl.style.width = expensesPct + '%';
-    if (progressPeriodContextEl) progressPeriodContextEl.textContent = formatPeriodContextPhrase(selectedPeriod);
-}
-
-function renderTodayTransactionsList() {
-    if (!todayTransactionsList) return;
-    const today = getTodayTransactions();
-    todayTransactionsList.innerHTML = '';
-
-    if (today.length === 0) {
-        todayTransactionsList.innerHTML = '<li class="transaction-item transaction-empty">No transactions today.</li>';
-        return;
-    }
-
-    today.forEach(t => {
-        const li = document.createElement('li');
-        li.className = 'transaction-item';
-        li.dataset.id = t.id;
-        const catOptions = CATEGORIES.map(c => `<option value="${c}" ${c === t.category ? 'selected' : ''}>${c}</option>`).join('');
-        li.innerHTML = `
-            <div class="transaction-info">
-                <span class="transaction-name">${escapeHtml(t.name)}</span>
-                <select class="transaction-category" data-id="${t.id}">${catOptions}</select>
-            </div>
-            <span class="transaction-amount">${formatCurrency(t.amount)}</span>
-            <div class="transaction-actions">
-                <button type="button" class="btn-edit" data-action="edit" data-id="${t.id}">Edit</button>
-                <button type="button" class="btn-delete" data-action="delete" data-id="${t.id}">Delete</button>
-            </div>
-        `;
-        todayTransactionsList.appendChild(li);
-    });
-
-    todayTransactionsList.querySelectorAll('.transaction-category').forEach(sel => {
-        sel.addEventListener('change', () => changeCategory(sel.dataset.id, sel.value));
-    });
-    todayTransactionsList.querySelectorAll('[data-action="edit"]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openEditModal(btn.dataset.id);
-        });
-    });
-    todayTransactionsList.querySelectorAll('[data-action="delete"]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            deleteTransaction(btn.dataset.id);
-        });
-    });
-}
-
-function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-}
-
-function openEditModal(id) {
-    const t = transactions.find(x => x.id === id);
-    if (!t || !editModal) return;
-    editingTransactionId = id;
-    editName.value = t.name;
-    editAmount.value = t.amount;
-    editCategory.value = t.category;
-    editModal.classList.remove('hidden');
-    showKeyboardDemo();
-    editName.focus();
-}
-
-function closeEditModal() {
-    editingTransactionId = null;
-    if (editModal) editModal.classList.add('hidden');
     hideKeyboardDemo();
 }
 
-function saveEditedTransaction() {
-    if (!editingTransactionId) return;
-    const t = transactions.find(x => x.id === editingTransactionId);
-    if (!t) return;
+function saveComposerEntry() {
+    const name = entryNameEl ? entryNameEl.value.trim() : "";
+    const amount = entryAmountEl ? parseFloat(entryAmountEl.value) : NaN;
+    const date = entryDateEl ? entryDateEl.value : "";
+    const kind = entryKindSelectEl ? entryKindSelectEl.value : "Other";
 
-    const name = editName.value.trim() || t.name;
-    const amount = Math.max(0, parseFloat(editAmount.value) || 0);
-    const category = editCategory.value;
-
-    t.name = name;
-    t.amount = amount;
-    t.category = category;
-    saveTransactions(transactions);
-
-    renderTodayTransactionsList();
-    updateSpentTodayDisplay();
-    updateProgressSummary();
-    closeEditModal();
-}
-
-function changeCategory(id, newCategory) {
-    const t = transactions.find(x => x.id === id);
-    if (!t) return;
-    t.category = newCategory;
-    saveTransactions(transactions);
-}
-
-function deleteTransaction(id) {
-    transactions = transactions.filter(t => t.id !== id);
-    saveTransactions(transactions);
-    renderTodayTransactionsList();
-    updateSpentTodayDisplay();
-    updateProgressSummary();
-}
-
-function showTodayTransactionsView() {
-    renderTodayTransactionsList();
-    if (todayTransactionsView) todayTransactionsView.classList.remove('hidden');
-}
-
-function hideTodayTransactionsView() {
-    if (todayTransactionsView) todayTransactionsView.classList.add('hidden');
-}
-
-function openIncomeModal(existingId) {
-    if (!incomeModal) return;
-    editingIncomeId = existingId || null;
-    const titleEl = document.getElementById('income-modal-title');
-    const nameEl = document.getElementById('income-name');
-    const amountEl = document.getElementById('income-amount');
-    const dateEl = document.getElementById('income-date');
-    const sourceEl = document.getElementById('income-source');
-    if (existingId) {
-        const e = incomeEntries.find(x => x.id === existingId);
-        if (!e) return;
-        if (titleEl) titleEl.textContent = 'Edit deposit';
-        if (nameEl) nameEl.value = e.name;
-        if (amountEl) amountEl.value = String(e.amount);
-        if (dateEl) dateEl.value = e.date;
-        if (sourceEl) sourceEl.value = INCOME_SOURCES.includes(e.source) ? e.source : 'Other';
-    } else {
-        if (titleEl) titleEl.textContent = 'Add deposit';
-        if (nameEl) nameEl.value = '';
-        if (amountEl) amountEl.value = '';
-        if (dateEl) dateEl.value = formatDateForStorage(new Date());
-        if (sourceEl) sourceEl.value = 'Salary';
-    }
-    incomeModal.classList.remove('hidden');
-    showKeyboardDemo();
-    if (nameEl) nameEl.focus();
-}
-
-function closeIncomeModal() {
-    editingIncomeId = null;
-    if (incomeModal) incomeModal.classList.add('hidden');
-    hideKeyboardDemo();
-}
-
-function saveIncomeFromModal() {
-    const nameEl = document.getElementById('income-name');
-    const amountEl = document.getElementById('income-amount');
-    const dateEl = document.getElementById('income-date');
-    const sourceEl = document.getElementById('income-source');
-    const name = (nameEl && nameEl.value.trim()) || 'Income';
-    const amount = Math.max(0, parseFloat(amountEl && amountEl.value) || 0);
-    const dateStr = (dateEl && dateEl.value) || formatDateForStorage(new Date());
-    const source = (sourceEl && sourceEl.value) || 'Other';
-    if (amount <= 0) {
-        alert('Please enter a positive amount.');
+    if (!name || Number.isNaN(amount) || amount <= 0 || !date) {
+        if (composerHintEl) composerHintEl.textContent = "Enter a description, amount, and date before saving.";
         return;
     }
-    if (editingIncomeId) {
-        const e = incomeEntries.find(x => x.id === editingIncomeId);
-        if (e) {
-            e.name = name;
-            e.amount = amount;
-            e.date = dateStr;
-            e.source = source;
-        }
-    } else {
-        incomeEntries.push({
+
+    if (entryMode === "expense") {
+        transactions.unshift({
             id: generateId(),
             name,
             amount,
-            date: dateStr,
-            source
+            date,
+            category: kind
         });
-    }
-    saveIncome(incomeEntries);
-    closeIncomeModal();
-    updateProgressSummary();
-    renderIncomeInsights();
-    renderIncomeEntriesList();
-}
-
-function deleteIncomeEntry(id) {
-    incomeEntries = incomeEntries.filter(i => i.id !== id);
-    saveIncome(incomeEntries);
-    updateProgressSummary();
-    renderIncomeInsights();
-    renderIncomeEntriesList();
-}
-
-function renderIncomeInsights() {
-    if (!incomeInsightsSummary || !incomeInsightsGrid) return;
-
-    const rows = getFilteredIncomeEntries();
-    const totalsBySource = {};
-    let largest = 0;
-    let largestSource = 'None';
-
-    rows.forEach((entry) => {
-        totalsBySource[entry.source] = (totalsBySource[entry.source] || 0) + entry.amount;
-    });
-
-    Object.entries(totalsBySource).forEach(([source, total]) => {
-        if (total > largest) {
-            largest = total;
-            largestSource = source;
-        }
-    });
-
-    if (rows.length === 0) {
-        incomeInsightsSummary.textContent = 'No income in the selected period yet.';
-        incomeInsightsGrid.innerHTML = '';
-        return;
-    }
-
-    const totalAmount = rows.reduce((sum, entry) => sum + entry.amount, 0);
-    incomeInsightsSummary.textContent =
-        rows.length + ' deposits totaling ' + formatCurrency(totalAmount) + '. Largest source: ' + largestSource + '.';
-
-    const cards = [
-        { label: 'Deposits', value: String(rows.length) },
-        { label: 'Sources', value: String(Object.keys(totalsBySource).length) },
-        { label: 'Largest', value: formatCurrency(largest) }
-    ];
-
-    incomeInsightsGrid.innerHTML = cards.map((card) => `
-        <div class="stat-block">
-            <span class="stat-label">${escapeHtml(card.label)}</span>
-            <span class="stat-value">${escapeHtml(card.value)}</span>
-        </div>
-    `).join('');
-}
-
-function renderIncomeEntriesList() {
-    if (!incomeEntriesList) return;
-    const rows = getFilteredIncomeEntries();
-    incomeEntriesList.innerHTML = '';
-    if (rows.length === 0) {
-        incomeEntriesList.innerHTML = '<li class="transaction-item transaction-empty">No income entries in this period.</li>';
-        return;
-    }
-    rows.forEach(i => {
-        const li = document.createElement('li');
-        li.className = 'transaction-item';
-        li.dataset.id = i.id;
-        li.innerHTML = `
-            <div class="transaction-info">
-                <span class="transaction-name">${escapeHtml(i.name)}</span>
-                <span class="income-entry-meta">${escapeHtml(i.source)} · ${formatShortDateDisplay(i.date)}</span>
-            </div>
-            <span class="transaction-amount-income">+${formatCurrency(i.amount)}</span>
-            <div class="transaction-actions">
-                <button type="button" class="btn-edit" data-income-action="edit" data-id="${escapeHtml(i.id)}">Edit</button>
-                <button type="button" class="btn-delete" data-income-action="delete" data-id="${escapeHtml(i.id)}">Delete</button>
-            </div>
-        `;
-        incomeEntriesList.appendChild(li);
-    });
-    incomeEntriesList.querySelectorAll('[data-income-action="edit"]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openIncomeModal(btn.dataset.id);
-        });
-    });
-    incomeEntriesList.querySelectorAll('[data-income-action="delete"]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            deleteIncomeEntry(btn.dataset.id);
-        });
-    });
-}
-
-function showIncomeEntriesView() {
-    if (incomeListPeriodLabel) {
-        incomeListPeriodLabel.textContent = 'Showing: ' + formatPeriodLabel(selectedPeriod);
-    }
-    renderIncomeInsights();
-    renderIncomeEntriesList();
-    if (incomeEntriesView) incomeEntriesView.classList.remove('hidden');
-}
-
-function hideIncomeEntriesView() {
-    if (incomeEntriesView) incomeEntriesView.classList.add('hidden');
-}
-
-function openExpenseModal(existingId) {
-    if (!expenseModal) return;
-    editingTransactionId = existingId || null;
-    const titleEl = document.getElementById('expense-modal-title');
-    const nameEl = document.getElementById('expense-name');
-    const amountEl = document.getElementById('expense-amount');
-    const dateEl = document.getElementById('expense-date');
-    const categoryEl = document.getElementById('expense-category');
-    
-    if (existingId) {
-        const e = transactions.find(x => x.id === existingId);
-        if (!e) return;
-        if (titleEl) titleEl.textContent = 'Edit expense';
-        if (nameEl) nameEl.value = e.name;
-        if (amountEl) amountEl.value = String(e.amount);
-        if (dateEl) dateEl.value = e.date;
-        if (categoryEl) categoryEl.value = CATEGORIES.includes(e.category) ? e.category : 'Other';
+        saveTransactions(transactions);
     } else {
-        if (titleEl) titleEl.textContent = 'Add expense';
-        if (nameEl) nameEl.value = '';
-        if (amountEl) amountEl.value = '';
-        if (dateEl) dateEl.value = formatDateForStorage(new Date());
-        if (categoryEl) categoryEl.value = 'Other';
-    }
-    expenseModal.classList.remove('hidden');
-    showKeyboardDemo();
-    if (nameEl) nameEl.focus();
-}
-
-function closeExpenseModal() {
-    editingTransactionId = null;
-    if (expenseModal) expenseModal.classList.add('hidden');
-    hideKeyboardDemo();
-}
-
-function saveExpenseFromModal() {
-    const nameEl = document.getElementById('expense-name');
-    const amountEl = document.getElementById('expense-amount');
-    const dateEl = document.getElementById('expense-date');
-    const categoryEl = document.getElementById('expense-category');
-    
-    const name = (nameEl && nameEl.value.trim()) || 'Expense';
-    const amount = Math.max(0, parseFloat(amountEl && amountEl.value) || 0);
-    const dateStr = (dateEl && dateEl.value) || formatDateForStorage(new Date());
-    const category = (categoryEl && categoryEl.value) || 'Other';
-    
-    if (amount <= 0) {
-        alert('Please enter a positive amount.');
-        return;
-    }
-    
-    if (editingTransactionId) {
-        const e = transactions.find(x => x.id === editingTransactionId);
-        if (e) {
-            e.name = name;
-            e.amount = amount;
-            e.date = dateStr;
-            e.category = category;
-        }
-    } else {
-        transactions.push({
+        incomeEntries.unshift({
             id: generateId(),
             name,
             amount,
-            date: dateStr,
-            category
+            date,
+            source: kind
         });
+        saveIncome(incomeEntries);
     }
-    
-    saveTransactions(transactions);
-    closeExpenseModal();
-    updateSpentTodayDisplay();
-    updateProgressSummary();
-    renderExpenseEntriesList();
-    renderTodayTransactionsList();
+
+    showAllEntries = false;
+    clearComposer(
+        entryMode === "expense"
+            ? "Expense saved. Your recent activity list updated below."
+            : "Income saved. Your recent activity list updated below."
+    );
+    updateSummary();
+    renderLedgerList();
 }
 
-function deleteExpenseEntry(id) {
-    transactions = transactions.filter(t => t.id !== id);
-    saveTransactions(transactions);
-    updateSpentTodayDisplay();
-    updateProgressSummary();
-    renderExpenseEntriesList();
-    renderTodayTransactionsList();
+function setEntryMode(mode) {
+    entryMode = mode;
+    updateEntryModeButtons();
+    populateEntryKindSelect();
+    clearComposer();
 }
 
-function renderExpenseEntriesList() {
-    if (!expenseEntriesList) return;
-    const rows = getFilteredExpenseEntries();
-    expenseEntriesList.innerHTML = '';
-    
-    if (rows.length === 0) {
-        expenseEntriesList.innerHTML = '<li class="transaction-item transaction-empty">No expense entries in this period.</li>';
-        return;
-    }
-    
-    rows.forEach(e => {
-        const li = document.createElement('li');
-        li.className = 'transaction-item';
-        li.dataset.id = e.id;
-        li.innerHTML = `
-            <div class="transaction-info">
-                <span class="transaction-name">${escapeHtml(e.name)}</span>
-                <span class="income-entry-meta">${escapeHtml(e.category)} · ${formatShortDateDisplay(e.date)}</span>
-            </div>
-            <span class="transaction-amount">-${formatCurrency(e.amount)}</span>
-            <div class="transaction-actions">
-                <button type="button" class="btn-edit" data-expense-action="edit" data-id="${escapeHtml(e.id)}">Edit</button>
-                <button type="button" class="btn-delete" data-expense-action="delete" data-id="${escapeHtml(e.id)}">Delete</button>
-            </div>
-        `;
-        expenseEntriesList.appendChild(li);
-    });
-    
-    expenseEntriesList.querySelectorAll('[data-expense-action="edit"]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            openExpenseModal(btn.dataset.id);
-        });
-    });
-    expenseEntriesList.querySelectorAll('[data-expense-action="delete"]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            deleteExpenseEntry(btn.dataset.id);
-        });
-    });
-}
-
-function showExpenseEntriesView() {
-    if (expenseListPeriodLabel) {
-        expenseListPeriodLabel.textContent = 'Showing: ' + formatPeriodLabel(selectedPeriod);
-    }
-    renderExpenseEntriesList();
-    if (expenseEntriesView) expenseEntriesView.classList.remove('hidden');
-}
-
-function hideExpenseEntriesView() {
-    if (expenseEntriesView) expenseEntriesView.classList.add('hidden');
-}
-
-if (spentTodayCard) {
-    spentTodayCard.addEventListener('click', showTodayTransactionsView);
-    spentTodayCard.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            showTodayTransactionsView();
-        }
-    });
-}
-
-if (backBtn) backBtn.addEventListener('click', hideTodayTransactionsView);
-if (editSaveBtn) editSaveBtn.addEventListener('click', saveEditedTransaction);
-if (editCancelBtn) editCancelBtn.addEventListener('click', closeEditModal);
-
-if (btnOpenIncomeModal) btnOpenIncomeModal.addEventListener('click', () => openIncomeModal(null));
-if (btnOpenIncomeList) btnOpenIncomeList.addEventListener('click', showIncomeEntriesView);
-if (incomeListBackBtn) incomeListBackBtn.addEventListener('click', hideIncomeEntriesView);
-if (incomeListAddBtn) incomeListAddBtn.addEventListener('click', () => openIncomeModal(null));
-if (incomeSaveBtn) incomeSaveBtn.addEventListener('click', saveIncomeFromModal);
-if (incomeCancelBtn) incomeCancelBtn.addEventListener('click', closeIncomeModal);
-
-if (btnOpenExpenseModal) btnOpenExpenseModal.addEventListener('click', () => openExpenseModal(null));
-if (btnOpenExpenseList) btnOpenExpenseList.addEventListener('click', showExpenseEntriesView);
-if (expenseListBackBtn) expenseListBackBtn.addEventListener('click', hideExpenseEntriesView);
-if (expenseListAddBtn) expenseListAddBtn.addEventListener('click', () => openExpenseModal(null));
-if (expenseSaveBtn) expenseSaveBtn.addEventListener('click', saveExpenseFromModal);
-if (expenseCancelBtn) expenseCancelBtn.addEventListener('click', closeExpenseModal);
-
-function openPeriodModal() {
-    if (periodModal) periodModal.classList.remove('hidden');
-}
-
-function closePeriodModal() {
-    if (periodModal) periodModal.classList.add('hidden');
-}
-
-function selectPeriod(period) {
+function setPeriod(period) {
     selectedPeriod = period;
     saveSelectedPeriod(period);
-    if (periodLabel) periodLabel.textContent = formatPeriodLabel(period);
-    updateProgressSummary();
-    closePeriodModal();
-    
-    if (incomeEntriesView && !incomeEntriesView.classList.contains('hidden')) {
-        if (incomeListPeriodLabel) {
-            incomeListPeriodLabel.textContent = 'Showing: ' + formatPeriodLabel(selectedPeriod);
-        }
-        renderIncomeInsights();
-        renderIncomeEntriesList();
-    }
-    
-    if (expenseEntriesView && !expenseEntriesView.classList.contains('hidden')) {
-        if (expenseListPeriodLabel) {
-            expenseListPeriodLabel.textContent = 'Showing: ' + formatPeriodLabel(selectedPeriod);
-        }
-        renderExpenseEntriesList();
-    }
+    showAllEntries = false;
+    updatePeriodButtons();
+    updateSummary();
+    renderLedgerList();
 }
 
-if (periodCard) {
-    periodCard.addEventListener('click', openPeriodModal);
-    periodCard.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            openPeriodModal();
-        }
+function setLedgerFilter(filter) {
+    ledgerFilter = filter;
+    showAllEntries = false;
+    activityFilterButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.ledgerFilter === filter);
     });
+    renderLedgerList();
 }
 
-if (periodModal) {
-    periodModal.querySelectorAll('.period-option').forEach(btn => {
-        btn.addEventListener('click', () => selectPeriod(btn.dataset.period));
+function deleteLedgerItem(id, type) {
+    if (type === "expense") {
+        transactions = transactions.filter((item) => item.id !== id);
+        saveTransactions(transactions);
+    } else {
+        incomeEntries = incomeEntries.filter((item) => item.id !== id);
+        saveIncome(incomeEntries);
+    }
+    updateSummary();
+    renderLedgerList();
+}
+
+function renderLedgerList() {
+    if (!activityListEl || !activityStatusEl || !activityShowMoreBtn) return;
+    let rows = getLedgerRows();
+    if (ledgerFilter !== "all") rows = rows.filter((row) => row.type === ledgerFilter);
+
+    const limitedRows = showAllEntries ? rows : rows.slice(0, 6);
+    activityListEl.innerHTML = "";
+
+    if (rows.length === 0) {
+        activityListEl.innerHTML = '<li class="transaction-item transaction-empty">No entries match the current filter.</li>';
+        activityStatusEl.textContent = "Try another period or switch between income and expenses.";
+        activityShowMoreBtn.classList.add("hidden");
+        return;
+    }
+
+    activityStatusEl.textContent =
+        (ledgerFilter === "all" ? "Showing both income and expenses" : "Showing only " + ledgerFilter) +
+        " for " + formatPeriodLabel(selectedPeriod) + ".";
+
+    limitedRows.forEach((row) => {
+        const li = document.createElement("li");
+        li.className = "transaction-item activity-ledger-item";
+        li.innerHTML = `
+            <div class="transaction-info">
+                <div class="activity-ledger-top">
+                    <span class="transaction-name">${escapeHtml(row.name)}</span>
+                    <span class="activity-ledger-tag ${row.type === "income" ? "tag-income" : "tag-expense"}">${row.type}</span>
+                </div>
+                <span class="income-entry-meta">${escapeHtml(row.label)} · ${formatShortDateDisplay(row.date)}</span>
+            </div>
+            <div class="activity-ledger-right">
+                <span class="${row.type === "income" ? "transaction-amount-income" : "transaction-amount"}">${row.type === "income" ? "+" : "-"}${formatCurrency(row.amount)}</span>
+                <button type="button" class="activity-ledger-delete" data-delete-id="${row.id}" data-delete-type="${row.type}">Delete</button>
+            </div>
+        `;
+        activityListEl.appendChild(li);
     });
-    const closeBtn = document.getElementById('period-close-btn');
-    if (closeBtn) closeBtn.addEventListener('click', closePeriodModal);
+
+    activityListEl.querySelectorAll("[data-delete-id]").forEach((button) => {
+        button.addEventListener("click", () => deleteLedgerItem(button.dataset.deleteId, button.dataset.deleteType));
+    });
+
+    const hasMore = rows.length > 6;
+    activityShowMoreBtn.classList.toggle("hidden", !hasMore);
+    activityShowMoreBtn.textContent = showAllEntries ? "Show fewer entries" : "Show all " + rows.length + " entries";
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    populateIncomeSourceSelect();
-    populateExpenseCategorySelect(); 
-    updateSpentTodayDisplay();
-    updateProgressSummary(); 
-    if (periodLabel) periodLabel.textContent = formatPeriodLabel(selectedPeriod);
-    renderIncomeInsights();
+document.addEventListener("DOMContentLoaded", () => {
+    updateSummary();
+    updatePeriodButtons();
+    updateEntryModeButtons();
+    populateEntryKindSelect();
+    renderLedgerList();
+    clearComposer();
 
-    [
-        document.getElementById('income-name'),
-        document.getElementById('income-amount'),
-        document.getElementById('income-date'),
-        document.getElementById('expense-name'),
-        document.getElementById('expense-amount'),
-        document.getElementById('expense-date'),
-        document.getElementById('edit-name'),
-        document.getElementById('edit-amount'),
-        document.getElementById('sandra-amount')
-    ].forEach(bindKeyboardAwareInput);
+    periodFilterButtons.forEach((button) => {
+        button.addEventListener("click", () => setPeriod(button.dataset.periodFilter));
+    });
+
+    entryModeButtons.forEach((button) => {
+        button.addEventListener("click", () => setEntryMode(button.dataset.entryMode));
+    });
+
+    activityFilterButtons.forEach((button) => {
+        button.addEventListener("click", () => setLedgerFilter(button.dataset.ledgerFilter));
+    });
+
+    if (activityShowMoreBtn) {
+        activityShowMoreBtn.addEventListener("click", () => {
+            showAllEntries = !showAllEntries;
+            renderLedgerList();
+        });
+    }
+
+    if (entrySaveBtn) entrySaveBtn.addEventListener("click", saveComposerEntry);
+    if (entryClearBtn) entryClearBtn.addEventListener("click", clearComposer);
+
+    [entryNameEl, entryAmountEl, entryDateEl].forEach(bindKeyboardAwareInput);
 
     if (keyboardDemo) {
-        keyboardDemo.querySelectorAll('[data-hide-key]').forEach((button) => {
-            button.addEventListener('click', dismissActivityKeyboard);
+        keyboardDemo.querySelectorAll("[data-hide-key]").forEach((button) => {
+            button.addEventListener("click", dismissActivityKeyboard);
         });
     }
 });
-
-function getCurrencySymbol() {
-    const currency = localStorage.getItem("userCurrency") || "USD";
-    return currency === "EUR" ? "€" : "$";
-}
-
-function updateDisplay() {
-    const symbol = getCurrencySymbol();
-    const amount = 100; 
-    document.getElementById("balance-amount").textContent = symbol + amount.toFixed(2);
-}

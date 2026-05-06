@@ -59,11 +59,26 @@ function saveGoals(goals) {
 function getMonthsLeft(date) {
     const now = new Date();
     const target = new Date(date + "T12:00:00");
-    return Math.max(1, (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth()));
+    const months = (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth());
+    return Math.max(0, months);
+}
+
+function getGoalTimelineLabel(date) {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const target = new Date(date + "T12:00:00");
+    target.setHours(0, 0, 0, 0);
+
+    if (target < now) return "Overdue";
+
+    const monthsLeft = getMonthsLeft(date);
+    if (monthsLeft <= 1) return "Due soon";
+    return monthsLeft + " months left";
 }
 
 function getMonthlyTarget(goal) {
-    return goal.amount / getMonthsLeft(goal.date);
+    const remaining = Math.max(0, goal.amount - goal.saved);
+    return remaining / Math.max(1, getMonthsLeft(goal.date));
 }
 
 function addGoal() {
@@ -189,6 +204,7 @@ function handleFocusOut(event) {
 function renderGoalCard(goal) {
     const percent = Math.min(100, Math.round((goal.saved / goal.amount) * 100));
     const monthlyTarget = getMonthlyTarget(goal);
+    const timelineLabel = getGoalTimelineLabel(goal.date);
     const isEditing = editingGoalId === goal.id;
 
     return `
@@ -196,7 +212,7 @@ function renderGoalCard(goal) {
             <div class="goal-top-row">
                 <div class="goal-heading-block">
                     <h3>${escapeHtml(goal.name)}</h3>
-                    <p class="goal-date">Due ${escapeHtml(goal.date)}</p>
+                    <p class="goal-date">Due ${escapeHtml(goal.date)} · ${timelineLabel}</p>
                 </div>
                 <div class="goal-summary-chip">${percent}%</div>
             </div>
@@ -211,7 +227,7 @@ function renderGoalCard(goal) {
                     <strong>${formatCurrency(goal.amount)}</strong>
                 </div>
                 <div class="goal-stat">
-                    <span class="goal-stat-label">Monthly</span>
+                    <span class="goal-stat-label">Needed / month</span>
                     <strong>${formatCurrency(monthlyTarget)}</strong>
                 </div>
             </div>

@@ -1,125 +1,163 @@
 :root {
-    --sage-green: #1a1224;
-    --card-white: #FFFFFF;
-    --text-dark: #1a1224;
-    --text-muted: #3a3344;
+    --settings-ink: #1a1224;
+    --settings-muted: #4a3d55;
+    --settings-surface: #f8f5fb;
+    --settings-border: #e7dfef;
 }
 
 body {
-    background-color: var(--sage-green);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: rgb(12, 3, 3);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     margin: 0;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: 100%;
 }
 
-/* Inside app phone shell (loads after style.css on settings page) */
 .phone-frame .settings-header {
     color: var(--text-on-page, #1a1224);
-    padding-top: 44px;
-    padding-bottom: 8px;
-}
-.phone-frame .menu-btn {
-    color: var(--text-on-page, #1a1224);
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
-/* Centering the Title */
 .settings-header {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* Centers the title */
-    position: relative;
-    padding: 20px;
-    color: white;
+    margin-bottom: 8px;
 }
 
-.menu-btn {
-    position: absolute;
-    left: 20px; /* Keeps menu button to the side while title stays center */
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
+.settings-container {
+    padding-top: 8px;
+}
+
+.settings-hero {
+    margin-bottom: 10px;
+}
+
+.settings-hero h2 {
+    margin: 4px 0 8px;
+    font-size: 1.1rem;
+    color: var(--settings-ink);
+}
+
+.settings-group {
+    margin-bottom: 10px;
+}
+
+.settings-group-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.group-title {
+    color: var(--settings-ink);
+    font-size: 1.05rem;
+    margin: 0 0 6px 0;
+}
+
+.settings-copy {
+    margin: 0;
+    color: var(--settings-muted);
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+.settings-current-chip {
+    flex: 0 0 auto;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: var(--settings-surface);
+    border: 1px solid var(--settings-border);
+    color: #4f3a63;
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.settings-choice-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.settings-choice {
+    min-height: 46px;
+    border-radius: 12px;
+    border: 1px solid var(--settings-border);
+    background: #fff;
+    color: var(--settings-ink);
+    font-size: 0.95rem;
+    font-weight: 700;
     cursor: pointer;
 }
 
-.settings-header h1 {
-    margin: 0;
-    font-size: 1.8rem;
-    font-weight: 600;
+.settings-choice.active {
+    background: #4f3a63;
+    color: #fff;
+    border-color: #4f3a63;
 }
 
-/* The White Card */
-.settings-container {
-    background-color: var(--card-white);
-    margin: 0 15px 100px 15px; /* 15px gap on sides, 100px on bottom for Nav */
-    padding: 25px;
-    border-radius: 20px 20px 0 0; /* Rounded top corners */
-    flex-grow: 1; /* Makes card stretch to fill space */
-    /* Shadow below only — upward offset was a visible dark line above the panel */
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
-    max-width: 600px;
-    align-self: center; /* Centers card on wide screens */
-    width: -webkit-fill-available;
+.settings-data-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
 }
 
-/* Grouping Information */
-.group-title {
-    color: var(--sage-green);
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-top: 20px;
-    padding-bottom: 5px;
-}
-
-.setting-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 0;
-    border-bottom: 1px solid #f9f9f9;
-}
-
-.setting-info {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--text-dark);
-}
-
-.setting-info i {
-    color: var(--sage-green);
-    width: 20px;
+.settings-data-card {
+    background: var(--settings-surface);
+    border: 1px solid var(--settings-border);
+    border-radius: 14px;
+    padding: 14px 12px;
     text-align: center;
 }
 
-/* Currency Button Styled for Contrast */
-.toggle-btn {
-    background-color: #f0f0f0;
-    color: var(--sage-green);
-    border: 1.5px solid var(--sage-green);
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-weight: bold;
+.settings-data-card strong {
+    display: block;
+    margin-top: 6px;
+    color: var(--settings-ink);
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.settings-data-label {
+    display: block;
+    color: var(--settings-muted);
+    font-size: 0.82rem;
+    line-height: 1.25;
+}
+
+.settings-note {
+    margin: 14px 0 0 0;
+    color: var(--settings-muted);
+    font-size: 0.88rem;
+    line-height: 1.4;
+}
+
+.settings-danger-btn {
+    margin-top: 14px;
+    min-height: 48px;
+    width: 100%;
+    border-radius: 12px;
+    border: none;
+    background: var(--settings-surface);
+    color: #5b5168;
+    border: 1px solid var(--settings-border);
+    font-size: 0.95rem;
+    font-weight: 700;
     cursor: pointer;
 }
 
-/* Switch styling remains similar, ensure it's high contrast */
-.slider {
-    background-color: #ccc; /* 3:1 contrast against white */
-}
-/*navigation tab*/
-.nav-item {
-    text-decoration: none;
-    color: #3d3548;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 0.8125rem;
-}
-.nav-item i {
-    font-size: 24px;
-    margin-bottom: 2px;
+@media (max-width: 520px) {
+    .settings-group-header {
+        flex-direction: column;
+    }
+
+    .settings-choice-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .settings-data-grid {
+        grid-template-columns: 1fr;
+    }
 }

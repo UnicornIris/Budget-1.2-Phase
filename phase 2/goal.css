@@ -7,12 +7,14 @@
     --device-height: 960px;
     --bg-page: #dce8dd;
     --text-on-page: #1a1224;
-    --text-muted: #2f2437;
+    --text-muted: #4a3d55;
     --btn-primary-bg: #4f3a63;
     --btn-primary-hover: #3d2d4d;
     --accent-income: #1e7a4a;
     --accent-expense: #b03028;
     --card-radius: 10px;
+    --surface-subtle: #f8f5fb;
+    --border-subtle: #e7dfef;
     --nav-h: 52px;
     --fab-above-nav: 56px;
     --z-nav: 1000;
@@ -89,14 +91,35 @@ body {
     border-radius: var(--card-radius);
     padding: 12px 14px;
     margin-bottom: 10px;
-    box-shadow: 0 2px 6px -1px rgba(0,0,0,0.07);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 2px 8px -2px rgba(26,18,36,0.09);
 }
 
 .card-section-title {
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 700;
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     color: var(--text-on-page);
+}
+
+.section-card {
+    padding: 14px 14px 12px;
+}
+
+.section-kicker {
+    margin: 0 0 4px 0;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.section-copy {
+    margin: 0 0 8px 0;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.35;
 }
 
 /* ── Goal form inputs & button inside .card ── */
@@ -108,8 +131,8 @@ body {
     margin-top: 8px;
     padding: 10px 12px;
     border-radius: 8px;
-    border: 1px solid #cfc4dc;
-    background: #faf8fc;
+    border: 1px solid var(--border-subtle);
+    background: var(--surface-subtle);
     color: var(--text-on-page);
     min-height: 44px;
     outline: none;
@@ -150,10 +173,16 @@ body {
 }
 
 /* ── Section labels ── */
-.goals-page h2.screen-title {
-    font-size: 1.125rem;
+.section-heading {
     margin-top: 16px;
     margin-bottom: 8px;
+}
+
+.section-title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--text-on-page);
 }
 
 /* ── Goal cards ── */
@@ -162,7 +191,8 @@ body {
     border-radius: var(--card-radius);
     padding: 12px;
     margin-bottom: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 2px 8px -2px rgba(26,18,36,0.09);
 }
 
 .goal-card h3 {
@@ -274,14 +304,19 @@ body {
 
 .goal-actions .btn-delete,
 .goal-tool-btn.btn-delete {
-    background: #e74c3c;
+    background: #f1edf6;
+    color: #5b5168;
+    border: 1px solid #e5dceb;
+    border-radius: 999px;
+    padding: 6px 12px;
+    min-height: 38px;
 }
 
 .goal-actions .btn-delete:hover,
 .goal-actions .btn-delete:focus,
 .goal-tool-btn.btn-delete:hover,
 .goal-tool-btn.btn-delete:focus {
-    background: #c0392b;
+    background: #e8e1f0;
 }
 
 .goal-stats-grid {
@@ -295,7 +330,8 @@ body {
     min-width: 0;
     padding: 8px 10px;
     border-radius: 8px;
-    background: #f8f5fb;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
 }
 
 .goal-stat strong {
@@ -306,7 +342,7 @@ body {
 .goal-stat-label {
     display: block;
     color: var(--text-muted);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -338,15 +374,15 @@ body {
     min-height: 38px;
     padding: 8px 10px;
     border-radius: 8px;
-    border: 1px solid #cfc4dc;
+    border: 1px solid var(--border-subtle);
     background: #fff;
     font: inherit;
 }
 
 .goal-tool-secondary {
-    background: #ece8f0 !important;
+    background: var(--surface-subtle) !important;
     color: var(--text-on-page) !important;
-    border: 1px solid #cfc4dc !important;
+    border: 1px solid var(--border-subtle) !important;
 }
 
 .goal-edit-panel {
@@ -479,6 +515,40 @@ body {
     font-size: 0.95rem;
 }
 
+.activity-number-pad {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 88px));
+    gap: 10px;
+    justify-content: center;
+}
+
+.activity-number-pad .keyboard-key {
+    height: 56px;
+    border-radius: 14px;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.activity-number-pad .keyboard-key-action {
+    background: linear-gradient(180deg, #b2bac7 0%, #9ca5b3 100%);
+    font-size: 1rem;
+}
+
+.activity-number-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.activity-number-actions .keyboard-key {
+    max-width: 292px;
+    width: 100%;
+    height: 48px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
 /* ── Goals list containers ── */
 #goals-list,
 #completed-goals-list {
@@ -509,12 +579,12 @@ body {
         padding: 0 8px;
     }
 
-    .keyboard-number-grid {
-        max-width: none;
+    .activity-number-pad {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
-    .keyboard-number-grid .keyboard-key {
-        height: 46px;
+    .activity-number-pad .keyboard-key {
+        height: 50px;
         font-size: 1.1rem;
     }
 }

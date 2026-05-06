@@ -9,203 +9,104 @@
 </head>
 <body>
 <div class="phone-frame">
-<div class="app-container with-fab-bar">
+<div class="app-container">
     <header class="screen-header">
-        <h1 class="screen-title">Budget Tracking</h1>
+        <h1 class="screen-title">Activity</h1>
     </header>
 
-    <div class="top-cards">
-        <div class="card">
-            <p class="label">Total balance</p>
-            <p class="value-primary" id="balance-amount">$0.00</p>
-            <p class="hint">Income minus expenses for the selected period.</p>
-        </div>
-        <div id="period-card" class="card period-card" role="button" tabindex="0" aria-label="Change period filter">
-            <p class="label">Period</p>
-            <p class="value-secondary" id="period-label">This month</p>
-            <p class="hint">Tap to change</p>
-        </div>
-    </div>
-
-
-    <div class="card progress-summary-card">
-        <p class="label">Income and expenses</p>
-        <p class="progress-context">Totals for <strong id="progress-period-context">this month</strong>. Compare the two amounts; net is above.</p>
-        <div class="progress-stats-row">
-            <div class="stat-block">
-                <span class="stat-label">Income</span>
-                <span id="stat-income" class="stat-value stat-income">$0.00</span>
+    <section class="card activity-balance-card">
+        <div class="activity-balance-row">
+            <div class="activity-balance-main">
+                <p class="label">Balance</p>
+                <p class="value-primary" id="balance-amount">$0.00</p>
+                <p class="hint">Income minus expenses for <span id="period-context">This month</span>.</p>
             </div>
-            <div class="stat-block">
-                <span class="stat-label">Expenses</span>
-                <span id="stat-expenses" class="stat-value stat-expenses">$0.00</span>
-            </div>
-            <div class="stat-block">
-                <span class="stat-label">Net</span>
-                <span id="stat-net" class="stat-value stat-net">$0.00</span>
+            <div class="activity-balance-side">
+                <div class="activity-mini-stat">
+                    <span class="stat-label">Income</span>
+                    <span id="stat-income" class="stat-value stat-income">$0.00</span>
+                </div>
+                <div class="activity-mini-stat">
+                    <span class="stat-label">Expenses</span>
+                    <span id="stat-expenses" class="stat-value stat-expenses">$0.00</span>
+                </div>
+                <div class="activity-mini-stat">
+                    <span class="stat-label">Spent today</span>
+                    <span id="today-spent-inline" class="stat-value">$0.00</span>
+                </div>
             </div>
         </div>
-        <div class="progress-bars-compact" aria-hidden="true">
-            <div class="bar-row">
-                <span class="bar-label">Income</span>
-                <div class="bar-track"><div id="bar-income" class="bar-fill bar-income" style="width:0%"></div></div>
+    </section>
+
+    <section class="card activity-filter-card">
+        <div class="activity-card-header">
+            <div>
+                <p class="label">Period filter</p>
+                <p class="hint">Use quick filters to reduce scrolling.</p>
             </div>
-            <div class="bar-row">
-                <span class="bar-label">Expenses</span>
-                <div class="bar-track"><div id="bar-expenses" class="bar-fill bar-expenses" style="width:0%"></div></div>
+        </div>
+        <div class="activity-chip-row">
+            <button type="button" class="activity-chip" data-period-filter="7">7 days</button>
+            <button type="button" class="activity-chip" data-period-filter="14">14 days</button>
+            <button type="button" class="activity-chip" data-period-filter="30">30 days</button>
+            <button type="button" class="activity-chip" data-period-filter="month">This month</button>
+        </div>
+    </section>
+
+    <section class="card activity-composer-card">
+        <div class="activity-card-header">
+            <div>
+                <p class="label">Add an entry</p>
+                <p class="hint">Log income or expenses without leaving the screen.</p>
             </div>
         </div>
-    </div>
-
-    <div class="card income-tools-card">
-        <p class="label">Income review</p>
-        <p class="hint income-tools-hint">Track pay history, source totals, and recent deposits.</p>
-        <div class="income-tools-row">
-            <button type="button" id="btn-open-income-modal" class="btn-income-tool">Add deposit</button>
-            <button type="button" id="btn-open-income-list" class="btn-income-tool btn-income-tool-secondary">Open pay history</button>
+        <div class="activity-segmented" role="tablist" aria-label="Entry type">
+            <button type="button" class="activity-segment active" data-entry-mode="expense">Expense</button>
+            <button type="button" class="activity-segment" data-entry-mode="income">Income</button>
         </div>
-    </div>
-    <div class="card income-tools-card">
-        <p class="label">Expense capture</p>
-        <p class="hint income-tools-hint">Quick-record purchases, then edit categories from the daily list.</p>
-        <div class="income-tools-row">
-            <button type="button" id="btn-open-expense-modal" class="btn-income-tool">
-                Add expense
-            </button>
-            
-            <button type="button" id="btn-open-expense-list" class="btn-income-tool btn-income-tool-secondary">
-                View entries
-            </button>
+        <div class="activity-form-grid">
+            <label class="activity-field">
+                <span>Description</span>
+                <input type="text" id="entry-name" placeholder="e.g. Groceries or Paycheck">
+            </label>
+            <label class="activity-field">
+                <span>Amount</span>
+                <input type="number" id="entry-amount" step="0.01" min="0" placeholder="0.00">
+            </label>
+            <label class="activity-field">
+                <span>Date</span>
+                <input type="date" id="entry-date">
+            </label>
+            <label class="activity-field">
+                <span id="entry-kind-label">Category</span>
+                <select id="entry-kind-select"></select>
+            </label>
         </div>
-    </div>
+        <div class="activity-form-actions">
+            <button type="button" id="entry-save-btn" class="btn-primary">Save entry</button>
+            <button type="button" id="entry-clear-btn" class="btn-secondary">Clear</button>
+        </div>
+        <p id="composer-hint" class="activity-helper-copy">Save an expense without leaving the Activity screen.</p>
+    </section>
 
-   
+    <section class="card activity-ledger-card">
+        <div class="activity-card-header">
+            <div>
+                <p class="label">Recent activity</p>
+                <p id="activity-status" class="hint">Showing both income and expenses for this month.</p>
+            </div>
+        </div>
+        <div class="activity-chip-row">
+            <button type="button" class="activity-chip active" data-ledger-filter="all">All</button>
+            <button type="button" class="activity-chip" data-ledger-filter="expense">Expenses</button>
+            <button type="button" class="activity-chip" data-ledger-filter="income">Income</button>
+        </div>
+        <ul id="activity-list" class="transactions-list activity-ledger-list"></ul>
+        <button type="button" id="activity-show-more-btn" class="btn-secondary btn-full hidden">Show all entries</button>
+    </section>
 </div>
 
-<div id="today-transactions-view" class="fullscreen-view hidden">
-    <div class="view-header">
-        <button type="button" id="back-btn" class="back-btn" aria-label="Back">← Back</button>
-        <h2 class="view-title">Today's transactions</h2>
-        <div class="today-summary-header">
-            Total Spent Today: <span id="spent-today-amount-header" style="font-weight: bold; color: #d9534f;">$0.00</span>
-        </div>
-    </div>
-    <ul id="today-transactions-list" class="transactions-list"></ul>
-</div>
-
-<div id="income-entries-view" class="fullscreen-view hidden">
-    <div class="view-header view-header-stacked">
-        <div class="view-header-row">
-            <button type="button" id="income-list-back-btn" class="back-btn" aria-label="Back">← Back</button>
-            <h2 class="view-title">Income review</h2>
-        </div>
-        <p class="view-subtitle" id="income-list-period-label">For selected period</p>
-        <div id="income-insights-card" class="card progress-summary-card">
-            <p class="label">Source mix</p>
-            <p class="progress-context" id="income-insights-summary">No income in the selected period yet.</p>
-            <div class="progress-stats-row" id="income-insights-grid"></div>
-        </div>
-        <button type="button" id="income-list-add-btn" class="btn-add-inline">+ Add deposit</button>
-    </div>
-    <ul id="income-entries-list" class="transactions-list"></ul>
-</div>
-
-<div id="income-modal" class="modal hidden">
-    <div class="modal-content">
-        <h3 id="income-modal-title">Add deposit</h3>
-        <label for="income-name">Description</label>
-        <input type="text" id="income-name" placeholder="e.g. Paycheck, Tax refund">
-        <label for="income-amount">Amount ($)</label>
-        <input type="number" id="income-amount" step="0.01" min="0" placeholder="0.00">
-        <label for="income-date">Date received</label>
-        <input type="date" id="income-date">
-        <label for="income-source">Source</label>
-        <select id="income-source"></select>
-        <div class="modal-actions">
-            <button type="button" id="income-save-btn" class="btn-primary">Save</button>
-            <button type="button" id="income-cancel-btn" class="btn-secondary">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<div id="expense-modal" class="modal hidden">
-    <div class="modal-content">
-        <h3 id="expense-modal-title">Add expense</h3>
-        <label for="expense-name">Description</label>
-        <input type="text" id="expense-name" placeholder="e.g. Groceries, Rent, Coffee">
-        <label for="expense-amount">Amount ($)</label>
-        <input type="number" id="expense-amount" step="0.01" min="0" placeholder="0.00">
-        <label for="expense-date">Date</label>
-        <input type="date" id="expense-date">
-        <label for="expense-category">Category</label>
-        <select id="expense-category"></select>
-        <div class="modal-actions">
-            <button type="button" id="expense-save-btn" class="btn-primary">Save</button>
-            <button type="button" id="expense-cancel-btn" class="btn-secondary">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<div id="expense-entries-view" class="fullscreen-view hidden">
-    <div class="view-header view-header-stacked">
-        <div class="view-header-row">
-            <button type="button" id="expense-list-back-btn" class="back-btn" aria-label="Back">← Back</button>
-            <h2 class="view-title">Expense entries</h2>
-        </div>
-        <p class="view-subtitle" id="expense-list-period-label">For selected period</p>
-        <button type="button" id="expense-list-add-btn" class="btn-add-inline">+ Add expense</button>
-    </div>
-    <ul id="expense-entries-list" class="transactions-list"></ul>
-</div>
-
-<div id="period-modal" class="modal hidden">
-    <div class="modal-content">
-        <h3>Filter by period</h3>
-        <div class="period-options">
-            <button type="button" class="period-option" data-period="7">Last 7 days</button>
-            <button type="button" class="period-option" data-period="14">Last 14 days</button>
-            <button type="button" class="period-option" data-period="30">Last 30 days</button>
-            <button type="button" class="period-option" data-period="month">This month</button>
-        </div>
-        <button type="button" id="period-close-btn" class="btn-secondary btn-full">Close</button>
-    </div>
-</div>
-
-<div id="edit-modal" class="modal hidden">
-    <div class="modal-content">
-        <h3>Edit transaction</h3>
-        <label for="edit-name">Name</label>
-        <input type="text" id="edit-name" placeholder="Transaction name">
-        <label for="edit-amount">Amount ($)</label>
-        <input type="number" id="edit-amount" step="0.01" min="0" placeholder="0.00">
-        <label for="edit-category">Category</label>
-        <select id="edit-category">
-            <option value="Food">Food</option>
-            <option value="Coffee">Coffee</option>
-            <option value="Transport">Transport</option>
-            <option value="Shopping">Shopping</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Bills">Bills</option>
-            <option value="Other">Other</option>
-        </select>
-        <div class="modal-actions">
-            <button type="button" id="edit-save-btn" class="btn-primary">Save</button>
-            <button type="button" id="edit-cancel-btn" class="btn-secondary">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<div class="fab-bar">
-    <button type="button" id="quick-add-btn" class="fab" onclick="toggleSandra()">
-        <span class="glyph-badge" aria-hidden="true">+</span>
-        <span class="fab-label">Quick add purchase</span>
-    </button>
-    <button type="button" id="spent-today-btn" class="fab fab-secondary" onclick="showTodayTransactionsView()">
-        <span class="fab-label">Spent today</span>
-    </button>
-</div>
-
-<div id="keyboard-demo" class="keyboard-demo hidden" aria-hidden="true">
+<div id="keyboard-demo" class="keyboard-demo activity-keyboard-demo hidden" aria-hidden="true">
     <div class="keyboard-layout keyboard-layout-text">
         <div class="keyboard-row">
             <span class="keyboard-key">Q</span>
@@ -250,7 +151,7 @@
     </div>
 
     <div class="keyboard-layout keyboard-layout-number">
-        <div class="keyboard-number-grid">
+        <div class="activity-number-pad">
             <span class="keyboard-key">1</span>
             <span class="keyboard-key">2</span>
             <span class="keyboard-key">3</span>
@@ -262,82 +163,13 @@
             <span class="keyboard-key">9</span>
             <span class="keyboard-key keyboard-key-action">.</span>
             <span class="keyboard-key">0</span>
-            <button type="button" class="keyboard-key keyboard-key-action" data-hide-key="done">done</button>
+            <span class="keyboard-key keyboard-key-action">delete</span>
         </div>
-        <div class="keyboard-number-footer">
-            <span class="keyboard-key keyboard-key-action keyboard-key-medium">#+=</span>
-            <span class="keyboard-key keyboard-key-space">space</span>
-            <button type="button" class="keyboard-key keyboard-key-action keyboard-key-medium" data-hide-key="done">done</button>
+        <div class="activity-number-actions">
+            <button type="button" class="keyboard-key keyboard-key-action keyboard-key-wide" data-hide-key="done">done</button>
         </div>
     </div>
 </div>
-
-<div id="purch-modal" class="hidden">
-    <div class="purch-modal-content">
-        <div class="purch-header">
-            <h3>Quick record</h3>
-            <button type="button" class="close-btn" onclick="toggleSandra()" aria-label="Close">✕</button>
-        </div>
-        <label for="sandra-amount">Amount</label>
-        <input type="number" id="sandra-amount" placeholder="0.00" inputmode="decimal">
-        <label for="purchase-category">Category</label>
-        <select id="purchase-category">
-            <option value="Food">Food</option>
-            <option value="Clothes">Clothes</option>
-            <option value="Groceries">Groceries</option>
-            <option value="Transport">Transport</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Other">Other</option>
-        </select>
-        <button type="button" class="save-btn" onclick="saveSandra()">Save purchase</button>
-    </div>
-</div>
-
-<script>
-function toggleSandra() {
-    const modal = document.getElementById('purch-modal');
-    const keyboard = document.getElementById('keyboard-demo');
-    if (!modal) return;
-    modal.classList.toggle('hidden');
-    if (!modal.classList.contains('hidden')) {
-        if (keyboard) keyboard.classList.remove('hidden');
-        document.getElementById('sandra-amount').focus();
-    } else if (keyboard) {
-        keyboard.classList.add('hidden');
-    }
-}
-
-function saveSandra() {
-    const amountInput = document.getElementById('sandra-amount');
-    const categorySelect = document.getElementById('purchase-category');
-    
-    const amount = parseFloat(amountInput.value);
-    const category = categorySelect.value;
-
-    if (amount && amount > 0) {
-        const newTransaction = {
-            id: generateId(),
-            name: category + " Purchase",
-            amount: amount,
-            category: category,
-            date: formatDateForStorage(new Date())
-        };
-
-        transactions.push(newTransaction);
-        saveTransactions(transactions);
-        updateSpentTodayDisplay();
-        updateProgressSummary();
-        renderTodayTransactionsList();
-
-        alert('Saved ' + formatCurrency(amount) + ' for ' + category + '!');
-        
-        amountInput.value = '';
-        toggleSandra();
-    } else {
-        alert('Please enter a valid amount.');
-    }
-}
-</script>
 
 <script src="app.js"></script>
 
@@ -359,6 +191,6 @@ function saveSandra() {
         <span class="label">Settings</span>
     </a>
 </nav>
-
-</div> </body>
+</div>
+</body>
 </html>
