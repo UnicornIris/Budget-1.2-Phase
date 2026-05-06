@@ -213,12 +213,38 @@ const expenseSaveBtn = document.getElementById('expense-save-btn');
 const expenseCancelBtn = document.getElementById('expense-cancel-btn');
 const keyboardDemo = document.getElementById('keyboard-demo');
 
-function showKeyboardDemo() {
-    if (keyboardDemo) keyboardDemo.classList.remove('hidden');
+function setActivityKeyboardMode(mode) {
+    if (!keyboardDemo) return;
+    keyboardDemo.dataset.mode = mode;
+}
+
+function showKeyboardDemo(target) {
+    if (!keyboardDemo) return;
+    const type = target && typeof target.type === 'string' ? target.type : '';
+    const numericTypes = new Set(['number', 'date', 'time', 'month', 'week']);
+    setActivityKeyboardMode(numericTypes.has(type) ? 'number' : 'text');
+    keyboardDemo.classList.remove('hidden');
 }
 
 function hideKeyboardDemo() {
     if (keyboardDemo) keyboardDemo.classList.add('hidden');
+}
+
+function dismissActivityKeyboard() {
+    hideKeyboardDemo();
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+    }
+}
+
+function bindKeyboardAwareInput(input) {
+    if (!input) return;
+    input.addEventListener('focus', () => showKeyboardDemo(input));
+    input.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            dismissActivityKeyboard();
+        }
+    });
 }
 
 function populateIncomeSourceSelect() {
@@ -786,6 +812,24 @@ document.addEventListener('DOMContentLoaded', () => {
     updateProgressSummary(); 
     if (periodLabel) periodLabel.textContent = formatPeriodLabel(selectedPeriod);
     renderIncomeInsights();
+
+    [
+        document.getElementById('income-name'),
+        document.getElementById('income-amount'),
+        document.getElementById('income-date'),
+        document.getElementById('expense-name'),
+        document.getElementById('expense-amount'),
+        document.getElementById('expense-date'),
+        document.getElementById('edit-name'),
+        document.getElementById('edit-amount'),
+        document.getElementById('sandra-amount')
+    ].forEach(bindKeyboardAwareInput);
+
+    if (keyboardDemo) {
+        keyboardDemo.querySelectorAll('[data-hide-key]').forEach((button) => {
+            button.addEventListener('click', dismissActivityKeyboard);
+        });
+    }
 });
 
 function getCurrencySymbol() {
