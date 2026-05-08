@@ -19,6 +19,21 @@
             <h2 id="reports-chart-heading" class="reports-card-title">Income &amp; spending</h2>
             <p class="reports-card-hint">Spending only, income only, or compare both. Pie + “Compare” shows total income vs total spending for the selected range.</p>
 
+            <div class="reports-summary-grid" aria-label="Reports summary">
+                <div class="reports-summary-card">
+                    <span class="reports-summary-label">Income</span>
+                    <strong id="reports-total-income">$0.00</strong>
+                </div>
+                <div class="reports-summary-card">
+                    <span class="reports-summary-label">Spending</span>
+                    <strong id="reports-total-spending">$0.00</strong>
+                </div>
+                <div class="reports-summary-card">
+                    <span class="reports-summary-label">Net</span>
+                    <strong id="reports-total-net">$0.00</strong>
+                </div>
+            </div>
+
             <div class="reports-controls">
                 <div class="reports-field">
                     <label class="reports-label" for="timeRange">Time range</label>

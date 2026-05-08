@@ -3,34 +3,48 @@ const STORAGE_KEY_INCOME = "budget-income";
 const STORAGE_KEY_PERIOD = "budget-period";
 const CATEGORIES = ["Food", "Coffee", "Transport", "Shopping", "Entertainment", "Bills", "Other"];
 const INCOME_SOURCES = ["Salary", "Freelance", "Side job", "Gift", "Refund", "Other"];
+const UPCOMING_BILLS = [
+    { id: "bill1", name: "Rent", amount: 1450, dueInDays: 2, status: "Due in 2 days" },
+    { id: "bill2", name: "Electric bill", amount: 86.2, dueInDays: 4, status: "Due this week" },
+    { id: "bill3", name: "Internet", amount: 59.99, dueInDays: 6, status: "Auto-pay off" }
+];
 
 let entryMode = "expense";
 let ledgerFilter = "all";
 let showAllEntries = false;
 let selectedPeriod = loadSelectedPeriod();
 
-function getDefaultTransactions() {
-    const today = formatDateForStorage(new Date());
+function daysAgo(count) {
     const d = new Date();
-    const weekAgo = new Date(d);
-    weekAgo.setDate(d.getDate() - 5);
+    d.setDate(d.getDate() - count);
+    return formatDateForStorage(d);
+}
+
+function getDefaultTransactions() {
     return [
-        { id: "1", name: "Coffee", amount: 5.5, category: "Coffee", date: today },
-        { id: "2", name: "Lunch", amount: 12.99, category: "Food", date: today },
-        { id: "3", name: "Uber", amount: 8.25, category: "Transport", date: today },
-        { id: "4", name: "Groceries", amount: 45.0, category: "Shopping", date: formatDateForStorage(weekAgo) },
-        { id: "5", name: "Netflix", amount: 15.99, category: "Bills", date: formatDateForStorage(d) }
+        { id: "tx1", name: "Trader Joe's groceries", amount: 82.34, category: "Food", date: daysAgo(0) },
+        { id: "tx2", name: "Morning coffee", amount: 5.75, category: "Coffee", date: daysAgo(0) },
+        { id: "tx3", name: "MTA refill", amount: 34.0, category: "Transport", date: daysAgo(1) },
+        { id: "tx4", name: "Netflix subscription", amount: 15.99, category: "Bills", date: daysAgo(1) },
+        { id: "tx5", name: "Target household supplies", amount: 46.28, category: "Shopping", date: daysAgo(2) },
+        { id: "tx6", name: "Lunch with client", amount: 24.9, category: "Food", date: daysAgo(3) },
+        { id: "tx7", name: "AMC movie ticket", amount: 18.5, category: "Entertainment", date: daysAgo(4) },
+        { id: "tx8", name: "Shell gas", amount: 52.4, category: "Transport", date: daysAgo(5) },
+        { id: "tx9", name: "Costco groceries", amount: 138.12, category: "Food", date: daysAgo(6) },
+        { id: "tx10", name: "Phone bill", amount: 68.0, category: "Bills", date: daysAgo(8) },
+        { id: "tx11", name: "Amazon office chair mat", amount: 41.95, category: "Shopping", date: daysAgo(10) },
+        { id: "tx12", name: "Birthday dinner", amount: 76.4, category: "Food", date: daysAgo(12) },
+        { id: "tx13", name: "Spotify Premium", amount: 10.99, category: "Bills", date: daysAgo(14) },
+        { id: "tx14", name: "Museum admission", amount: 22.0, category: "Entertainment", date: daysAgo(17) }
     ];
 }
 
 function getDefaultIncome() {
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = d.getMonth();
-    const pad = (n) => String(n).padStart(2, "0");
     return [
-        { id: generateId(), name: "Salary", date: `${y}-${pad(m + 1)}-01`, amount: 2500, source: "Salary" },
-        { id: generateId(), name: "Freelance", date: `${y}-${pad(m + 1)}-15`, amount: 1000, source: "Freelance" }
+        { id: "inc1", name: "Biweekly paycheck", date: daysAgo(1), amount: 2450, source: "Salary" },
+        { id: "inc2", name: "Website design deposit", date: daysAgo(6), amount: 780, source: "Freelance" },
+        { id: "inc3", name: "Tutoring session", date: daysAgo(10), amount: 140, source: "Side job" },
+        { id: "inc4", name: "Travel reimbursement", date: daysAgo(18), amount: 96.5, source: "Refund" }
     ];
 }
 
@@ -53,7 +67,9 @@ function loadTransactions() {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) return JSON.parse(raw);
     } catch (e) {}
-    return getDefaultTransactions();
+    const defaults = getDefaultTransactions();
+    saveTransactions(defaults);
+    return defaults;
 }
 
 function saveTransactions(transactions) {
@@ -68,7 +84,9 @@ function loadIncome() {
             if (Array.isArray(arr)) return arr.map(normalizeIncomeEntry).filter(Boolean);
         }
     } catch (e) {}
-    return getDefaultIncome();
+    const defaults = getDefaultIncome();
+    saveIncome(defaults);
+    return defaults;
 }
 
 function saveIncome(entries) {
@@ -159,6 +177,9 @@ const activityStatusEl = document.getElementById("activity-status");
 const activityFilterButtons = Array.from(document.querySelectorAll("[data-ledger-filter]"));
 const activityShowMoreBtn = document.getElementById("activity-show-more-btn");
 const keyboardDemo = document.getElementById("keyboard-demo");
+const lowBalanceAlertEl = document.getElementById("low-balance-alert");
+const lowBalanceMessageEl = document.getElementById("low-balance-message");
+const upcomingBillsListEl = document.getElementById("upcoming-bills-list");
 
 function setActivityKeyboardMode(mode) {
     if (!keyboardDemo) return;
@@ -246,6 +267,47 @@ function updateSummary() {
     if (statIncomeEl) statIncomeEl.textContent = formatCurrency(income);
     if (statExpensesEl) statExpensesEl.textContent = formatCurrency(expenses);
     if (todaySpentInlineEl) todaySpentInlineEl.textContent = formatCurrency(getTodaySpent());
+    updateLowBalanceAlert(balance, expenses);
+}
+
+function updateLowBalanceAlert(balance, expenses) {
+    if (!lowBalanceAlertEl || !lowBalanceMessageEl) return;
+
+    const threshold = 250;
+    const shouldWarn = balance <= threshold || expenses >= 500;
+    lowBalanceAlertEl.classList.toggle("hidden", !shouldWarn);
+
+    if (!shouldWarn) return;
+
+    if (balance <= threshold) {
+        lowBalanceMessageEl.textContent = "Only " + formatCurrency(balance) + " is left after current expenses. Review upcoming bills before adding non-essential spending.";
+    } else {
+        lowBalanceMessageEl.textContent = "Spending is already at " + formatCurrency(expenses) + " for " + formatPeriodLabel(selectedPeriod) + ". Consider slowing non-essential purchases.";
+    }
+}
+
+function renderUpcomingBills() {
+    if (!upcomingBillsListEl) return;
+    upcomingBillsListEl.innerHTML = "";
+
+    UPCOMING_BILLS.forEach((bill) => {
+        const item = document.createElement("li");
+        item.className = "activity-bill-item";
+        item.innerHTML = `
+            <div class="activity-bill-main">
+                <div class="activity-bill-top">
+                    <span class="transaction-name">${escapeHtml(bill.name)}</span>
+                    <span class="activity-bill-badge">${escapeHtml(bill.status)}</span>
+                </div>
+                <span class="income-entry-meta">${bill.dueInDays <= 2 ? "Needs attention soon" : "Planned recurring payment"}</span>
+            </div>
+            <div class="activity-bill-right">
+                <span class="transaction-amount">${formatCurrency(bill.amount)}</span>
+                <button type="button" class="activity-ledger-delete">Mark paid</button>
+            </div>
+        `;
+        upcomingBillsListEl.appendChild(item);
+    });
 }
 
 function updatePeriodButtons() {
@@ -410,6 +472,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateEntryModeButtons();
     populateEntryKindSelect();
     renderLedgerList();
+    renderUpcomingBills();
     clearComposer();
 
     periodFilterButtons.forEach((button) => {

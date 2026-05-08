@@ -198,6 +198,21 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+function updateReportsSummary(selected) {
+    const incomeEl = document.getElementById('reports-total-income');
+    const spendingEl = document.getElementById('reports-total-spending');
+    const netEl = document.getElementById('reports-total-net');
+    if (!incomeEl || !spendingEl || !netEl || !selected) return;
+
+    const totalIncome = selected.income.reduce((sum, value) => sum + value, 0);
+    const totalSpending = selected.spending.reduce((sum, value) => sum + value, 0);
+    const net = totalIncome - totalSpending;
+
+    incomeEl.textContent = formatCurrency(totalIncome);
+    spendingEl.textContent = formatCurrency(totalSpending);
+    netEl.textContent = formatCurrency(net);
+}
+
 function getRecentLedger(limit) {
     const expenses = loadExpenseTransactions();
     const income = loadIncomeEntries();
@@ -279,6 +294,7 @@ function renderChart() {
     const ctx = document.getElementById('myChart');
     const selected = buildChartData(range);
     if (!ctx || !selected) return;
+    updateReportsSummary(selected);
 
     if (myChart) myChart.destroy();
 

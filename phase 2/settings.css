@@ -1,6 +1,6 @@
 :root {
     --settings-ink: #1a1224;
-    --settings-muted: #4a3d55;
+    --settings-muted: #3f324a;
     --settings-surface: #f8f5fb;
     --settings-border: #e7dfef;
 }
@@ -58,7 +58,7 @@ body {
 .settings-copy {
     margin: 0;
     color: var(--settings-muted);
-    font-size: 0.95rem;
+    font-size: 0.98rem;
     line-height: 1.45;
 }
 
@@ -123,14 +123,14 @@ body {
 .settings-data-label {
     display: block;
     color: var(--settings-muted);
-    font-size: 0.82rem;
+    font-size: 0.875rem;
     line-height: 1.25;
 }
 
 .settings-note {
     margin: 14px 0 0 0;
     color: var(--settings-muted);
-    font-size: 0.88rem;
+    font-size: 0.94rem;
     line-height: 1.4;
 }
 
@@ -143,7 +143,7 @@ body {
     background: var(--settings-surface);
     color: #5b5168;
     border: 1px solid var(--settings-border);
-    font-size: 0.95rem;
+    font-size: 0.98rem;
     font-weight: 700;
     cursor: pointer;
 }

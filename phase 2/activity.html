@@ -36,6 +36,13 @@
                 </div>
             </div>
         </div>
+        <div id="low-balance-alert" class="activity-alert hidden" aria-live="polite">
+            <div class="activity-alert-icon" aria-hidden="true">!</div>
+            <div>
+                <p class="activity-alert-title">Low balance alert</p>
+                <p id="low-balance-message" class="activity-alert-copy">Spending is running higher than expected for this period.</p>
+            </div>
+        </div>
     </section>
 
     <section class="card activity-filter-card">
@@ -87,6 +94,16 @@
             <button type="button" id="entry-clear-btn" class="btn-secondary">Clear</button>
         </div>
         <p id="composer-hint" class="activity-helper-copy">Save an expense without leaving the Activity screen.</p>
+    </section>
+
+    <section class="card activity-bills-card">
+        <div class="activity-card-header">
+            <div>
+                <p class="label">Upcoming bills</p>
+                <p class="hint">Upcoming recurring payments help avoid missed expenses.</p>
+            </div>
+        </div>
+        <ul id="upcoming-bills-list" class="activity-bills-list"></ul>
     </section>
 
     <section class="card activity-ledger-card">

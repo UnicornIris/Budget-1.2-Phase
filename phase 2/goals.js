@@ -3,6 +3,12 @@ const GOALS_KEY = "budget-goals";
 let editingGoalId = null;
 let keyboardHideTimer = null;
 
+function offsetDate(monthsFromNow) {
+    const d = new Date();
+    d.setMonth(d.getMonth() + monthsFromNow);
+    return d.toISOString().slice(0, 10);
+}
+
 function getKeyboardDemo() {
     return document.getElementById("keyboard-demo");
 }
@@ -34,8 +40,18 @@ function hideKeyboardDemo() {
 
 function formatCurrency(amt) {
     const currency = localStorage.getItem("userCurrency") || "USD";
-    const symbol = currency === "EUR" ? "EUR " : "$";
+    const map = { USD: "$", EUR: "EUR ", GBP: "GBP ", JPY: "JPY " };
+    const symbol = map[currency] || "$";
     return symbol + Number(amt).toFixed(2);
+}
+
+function getDefaultGoals() {
+    return [
+        { id: 101, name: "TV", amount: 2000, date: offsetDate(5), saved: 300 },
+        { id: 102, name: "Emergency fund", amount: 6000, date: offsetDate(9), saved: 1800 },
+        { id: 103, name: "Japan trip", amount: 3200, date: offsetDate(7), saved: 950 },
+        { id: 104, name: "Laptop", amount: 4000, date: offsetDate(-1), saved: 4000 }
+    ];
 }
 
 function escapeHtml(text) {
@@ -49,7 +65,9 @@ function loadGoals() {
         const raw = localStorage.getItem(GOALS_KEY);
         if (raw) return JSON.parse(raw);
     } catch (e) {}
-    return [];
+    const defaults = getDefaultGoals();
+    saveGoals(defaults);
+    return defaults;
 }
 
 function saveGoals(goals) {

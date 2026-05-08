@@ -7,7 +7,7 @@
     --device-height: 960px;
     --bg-page: #dce8dd;
     --text-on-page: #1a1224;
-    --text-muted: #4a3d55;
+    --text-muted: #3f324a;
     --btn-primary-bg: #4f3a63;
     --btn-primary-hover: #3d2d4d;
     --accent-income: #1e7a4a;
@@ -109,7 +109,7 @@ body {
 .section-kicker {
     margin: 0 0 4px 0;
     color: var(--text-muted);
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -118,7 +118,7 @@ body {
 .section-copy {
     margin: 0 0 8px 0;
     color: var(--text-muted);
-    font-size: 0.9375rem;
+    font-size: 0.98rem;
     line-height: 1.35;
 }
 
@@ -169,7 +169,7 @@ body {
 .goal-form-helper {
     margin: 10px 0 0 0;
     color: var(--text-muted);
-    font-size: 0.9375rem;
+    font-size: 0.98rem;
 }
 
 /* ── Section labels ── */
@@ -228,12 +228,12 @@ body {
 
 .goal-percent {
     color: var(--text-muted);
-    font-size: 0.875rem;
+    font-size: 0.94rem;
     margin: 0;
 }
 
 .goal-date {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     color: var(--text-muted);
     margin: 2px 0 0 0;
 }
@@ -287,7 +287,7 @@ body {
     padding: 8px 14px;
     border-radius: 8px;
     border: none;
-    font-size: 0.875rem;
+    font-size: 0.94rem;
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
@@ -336,13 +336,13 @@ body {
 
 .goal-stat strong {
     display: block;
-    font-size: 0.9375rem;
+    font-size: 1rem;
 }
 
 .goal-stat-label {
     display: block;
     color: var(--text-muted);
-    font-size: 0.72rem;
+    font-size: 0.82rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03em;

@@ -4,7 +4,7 @@
     --device-height: 960px;
     --bg-page: #dce8dd;
     --text-on-page: #1a1224;
-    --text-muted: #4a3d55;
+    --text-muted: #3f324a;
     --btn-primary-bg: #4f3a63;
     --btn-primary-hover: #3d2d4d;
     --accent-income: #1e7a4a;
@@ -115,7 +115,7 @@ body {
 }
 
 .card .hint {
-    font-size: 0.9375rem;
+    font-size: 0.98rem;
     color: var(--text-muted);
     margin: 6px 0 0 0;
     line-height: 1.35;
@@ -124,7 +124,7 @@ body {
 .section-kicker {
     margin: 0 0 4px 0;
     color: var(--text-muted);
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -148,6 +148,7 @@ body {
 .activity-balance-card,
 .activity-filter-card,
 .activity-composer-card,
+.activity-bills-card,
 .activity-ledger-card {
     margin-bottom: 10px;
 }
@@ -175,7 +176,7 @@ body {
 
 .activity-balance-main .hint {
     margin: 0;
-    font-size: 0.84rem;
+    font-size: 0.92rem;
 }
 
 .activity-balance-side {
@@ -195,15 +196,54 @@ body {
 .activity-mini-stat .stat-label {
     display: block;
     margin-bottom: 4px;
-    font-size: 0.72rem;
-    line-height: 1.1;
+    font-size: 0.82rem;
+    line-height: 1.2;
     white-space: nowrap;
 }
 
 .activity-mini-stat .stat-value {
-    font-size: 0.82rem;
-    line-height: 1.18;
+    font-size: 0.92rem;
+    line-height: 1.22;
     overflow-wrap: anywhere;
+}
+
+.activity-alert {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px;
+    align-items: start;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #fff4e8;
+    border: 1px solid #efc48b;
+}
+
+.activity-alert-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: #c46b1c;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    font-weight: 800;
+}
+
+.activity-alert-title {
+    margin: 0 0 2px 0;
+    color: #734315;
+    font-size: 0.98rem;
+    font-weight: 800;
+}
+
+.activity-alert-copy {
+    margin: 0;
+    color: #734315;
+    font-size: 0.94rem;
+    line-height: 1.35;
 }
 
 .activity-card-header {
@@ -228,7 +268,7 @@ body {
     background: #fff;
     color: var(--text-on-page);
     padding: 8px 14px;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
 }
@@ -258,7 +298,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    font-size: 0.9375rem;
+    font-size: 0.98rem;
     font-weight: 700;
     color: var(--text-on-page);
 }
@@ -283,7 +323,54 @@ body {
 .activity-helper-copy {
     margin: 10px 0 0 0;
     color: var(--text-muted);
-    font-size: 0.9375rem;
+    font-size: 0.98rem;
+}
+
+.activity-bills-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.activity-bill-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
+}
+
+.activity-bill-main {
+    min-width: 0;
+}
+
+.activity-bill-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+
+.activity-bill-badge {
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #f5ead7;
+    color: #8a541f;
+    font-size: 0.8125rem;
+    font-weight: 700;
+}
+
+.activity-bill-right {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 8px;
 }
 
 .activity-ledger-list {
@@ -306,7 +393,7 @@ body {
 .activity-ledger-tag {
     padding: 3px 8px;
     border-radius: 999px;
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -333,7 +420,7 @@ body {
     border: none;
     background: var(--surface-subtle);
     color: #5b5168;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     font-weight: 700;
     cursor: pointer;
     padding: 6px 10px;
@@ -607,7 +694,7 @@ body {
 }
 .transaction-name {
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 1.05rem;
 }
 .transaction-empty {
     justify-content: center;
@@ -628,7 +715,7 @@ body {
     max-width: 100%;
 }
 .income-entry-meta {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     color: var(--text-muted);
     margin-top: 4px;
     display: block;
@@ -636,7 +723,7 @@ body {
 .transaction-amount-income {
     color: var(--accent-income);
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.05rem;
 }
 .modal-hint {
     font-size: 0.875rem;
@@ -646,7 +733,7 @@ body {
 .transaction-amount {
     font-weight: 700;
     color: var(--accent-expense);
-    font-size: 1rem;
+    font-size: 1.05rem;
 }
 .transaction-actions {
     display: flex;
@@ -821,7 +908,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     font-weight: 600;
     min-width: 64px;
     min-height: 44px;
@@ -1213,10 +1300,41 @@ body {
 }
 
 .reports-card-hint {
-    font-size: 0.9375rem;
+    font-size: 0.98rem;
     color: var(--text-muted);
     margin: 0 0 14px 0;
     line-height: 1.4;
+}
+
+.reports-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.reports-summary-card {
+    background: var(--surface-subtle);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.reports-summary-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+.reports-summary-card strong {
+    display: block;
+    color: var(--text-on-page);
+    font-size: 1.05rem;
+    line-height: 1.15;
 }
 
 .reports-controls {
@@ -1234,7 +1352,7 @@ body {
 }
 
 .reports-label {
-    font-size: 0.875rem;
+    font-size: 0.92rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -1335,6 +1453,10 @@ body {
     }
 
     .reports-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .reports-summary-grid {
         grid-template-columns: 1fr;
     }
     .reports-field-full {
